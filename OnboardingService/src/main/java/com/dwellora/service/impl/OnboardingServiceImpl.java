@@ -4,7 +4,9 @@ import com.dwellora.dto.OnboardingRequestDTO;
 import com.dwellora.dto.OnboardingResponseDTO;
 import com.dwellora.entity.OnboardingRequest;
 import com.dwellora.enums.OnboardingStatus;
+import com.dwellora.event.CommunityApprovedEvent;
 import com.dwellora.exception.OnboardingException;
+import com.dwellora.kafka.CommunityProducer;
 import com.dwellora.repository.OnboardingRepository;
 import com.dwellora.service.OnboardingService;
 import java.time.LocalDateTime;
@@ -15,9 +17,11 @@ import org.springframework.stereotype.Service;
 public class OnboardingServiceImpl implements OnboardingService {
 
     private final OnboardingRepository repository;
+    private final CommunityProducer producer;
 
-    public OnboardingServiceImpl(OnboardingRepository repository) {
+    public OnboardingServiceImpl(OnboardingRepository repository, CommunityProducer producer) {
         this.repository = repository;
+        this.producer = producer;
     }
 
     @Override
@@ -48,9 +52,23 @@ public class OnboardingServiceImpl implements OnboardingService {
 
         request.setStatus(OnboardingStatus.APPROVED);
         request.setApprovedAt(LocalDateTime.now());
-        OnboardingRequest saved = repository.save(request);
+        repository.save(request);
 
-        return mapToResponse(saved);
+        CommunityApprovedEvent event = new CommunityApprovedEvent();
+        event.setRequestId(request.getRequestId());
+        event.setApartmentName(request.getApartmentName());
+        event.setAddress(request.getAddress());
+        event.setCity(request.getCity());
+        event.setState(request.getState());
+        event.setPincode(request.getPincode());
+        event.setTotalBlocks(request.getTotalBlocks());
+        event.setTotalUnits(request.getTotalUnits());
+        event.setManagerName(request.getManagerName());
+        event.setManagerEmail(request.getManagerEmail());
+        event.setManagerPhone(request.getManagerPhone());
+        producer.publish(event);
+
+        return mapToResponse(request);
     }
 
     @Override
