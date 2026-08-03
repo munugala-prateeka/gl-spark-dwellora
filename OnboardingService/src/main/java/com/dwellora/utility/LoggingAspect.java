@@ -13,72 +13,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 
-    private final Logger logger =
-            LoggerFactory.getLogger(
-                    LoggingAspect.class);
+    private final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Before(
-            "execution(* com.dwellora.app.service.impl.*.*(..))")
-
-    public void logBefore(
-            JoinPoint joinPoint){
-
-        logger.info(
-
-                "Executing Service Method : {}",
-
-                joinPoint.getSignature().getName()
-
-        );
-
+            "execution(* com.dwellora.service.impl.*.*(..)) || execution(*"
+                    + " com.dwellora.kafka.*.*(..))")
+    public void logBefore(JoinPoint joinPoint) {
+        logger.info("Executing Method : {}", joinPoint.getSignature().getName());
     }
 
     @AfterReturning(
-
             pointcut =
-                    "execution(* com.dwellora.app.service.impl.*.*(..))",
-
+                    "execution(* com.dwellora.service.impl.*.*(..)) || execution(*"
+                            + " com.dwellora.kafka.*.*(..))",
             returning = "result")
-
-    public void logAfterReturning(
-
-            JoinPoint joinPoint,
-
-            Object result){
-
-        logger.info(
-
-                "Completed Service Method : {}",
-
-                joinPoint.getSignature().getName()
-
-        );
-
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        logger.info("Completed Method : {}", joinPoint.getSignature().getName());
     }
 
     @AfterThrowing(
-
             pointcut =
-                    "execution(* com.dwellora.app.service.impl.*.*(..))",
-
+                    "execution(* com.dwellora.service.impl.*.*(..)) || execution(*"
+                            + " com.dwellora.kafka.*.*(..))",
             throwing = "error")
-
-    public void logAfterThrowing(
-
-            JoinPoint joinPoint,
-
-            Exception error){
-
-        logger.error(
-
-                "Exception in {} : {}",
-
-                joinPoint.getSignature().getName(),
-
-                error.getMessage()
-
-        );
-
+    public void logAfterThrowing(JoinPoint joinPoint, Exception error) {
+        logger.error("Exception in {} : {}", joinPoint.getSignature().getName(), error.getMessage());
     }
-
 }
