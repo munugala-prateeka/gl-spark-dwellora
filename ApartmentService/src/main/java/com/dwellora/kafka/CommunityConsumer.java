@@ -5,11 +5,16 @@ import com.dwellora.enums.Status;
 import com.dwellora.event.ApartmentCreatedEvent;
 import com.dwellora.event.CommunityApprovedEvent;
 import com.dwellora.repository.ApartmentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class CommunityConsumer {
+
+    private static final Logger logger = LoggerFactory.getLogger(CommunityConsumer.class);
 
     private final ApartmentRepository repository;
     private final ApartmentProducer producer;
@@ -21,7 +26,7 @@ public class CommunityConsumer {
 
     @KafkaListener(topics = "community-approved", groupId = "apartment-group")
     public void consume(CommunityApprovedEvent event) {
-        System.out.println("========== RECEIVED ==========");
+        logger.info("========== RECEIVED ==========");
         System.out.println(event);
 
         Apartment apartment = new Apartment();
@@ -45,6 +50,6 @@ public class CommunityConsumer {
 
         producer.publish(created);
 
-        System.out.println("Apartment Created : " + apartment.getApartmentId());
+        logger.info("Apartment Created : " + apartment.getApartmentId());
     }
 }

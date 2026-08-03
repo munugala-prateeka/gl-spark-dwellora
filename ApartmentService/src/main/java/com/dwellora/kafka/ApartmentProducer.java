@@ -1,6 +1,8 @@
 package com.dwellora.kafka;
 
 import com.dwellora.event.ApartmentCreatedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Service;
 public class ApartmentProducer {
 
     private static final String TOPIC = "apartment-created";
+
+    private static final Logger logger = LoggerFactory.getLogger(CommunityConsumer.class);
 
     private final KafkaTemplate<String, ApartmentCreatedEvent> kafkaTemplate;
 
@@ -17,6 +21,6 @@ public class ApartmentProducer {
 
     public void publish(ApartmentCreatedEvent event) {
         kafkaTemplate.send(TOPIC, event);
-        System.out.println("Apartment Created Event Published");
+        logger.info("Apartment Created Event Published");
     }
 }
