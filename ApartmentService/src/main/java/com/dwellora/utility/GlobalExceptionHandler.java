@@ -1,6 +1,6 @@
 package com.dwellora.utility;
 
-import com.dwellora.exception.OnboardingException;
+import com.dwellora.exception.ApartmentException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorInfo> handleValidationException(
-            MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorInfo> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new LinkedHashMap<>();
         ex.getBindingResult()
                 .getFieldErrors()
@@ -24,9 +23,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(OnboardingException.class)
-    public ResponseEntity<ErrorInfo> handleOnboardingException(OnboardingException ex) {
-        ErrorInfo errorInfo = new ErrorInfo("Onboarding Error", ex.getMessage());
+    @ExceptionHandler(ApartmentException.class)
+    public ResponseEntity<ErrorInfo> handleApartmentException(ApartmentException ex) {
+        ErrorInfo errorInfo = new ErrorInfo("Apartment Error", ex.getMessage());
         return new ResponseEntity<>(errorInfo, HttpStatus.NOT_FOUND);
     }
 

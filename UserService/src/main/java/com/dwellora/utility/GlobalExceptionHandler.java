@@ -1,6 +1,6 @@
 package com.dwellora.utility;
 
-import com.dwellora.exception.OnboardingException;
+import com.dwellora.exception.UserException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -24,10 +24,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(OnboardingException.class)
-    public ResponseEntity<ErrorInfo> handleOnboardingException(OnboardingException ex) {
-        ErrorInfo errorInfo = new ErrorInfo("Onboarding Error", ex.getMessage());
-        return new ResponseEntity<>(errorInfo, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ErrorInfo> handleUserException(UserException ex) {
+        ErrorInfo errorInfo = new ErrorInfo("User Error", ex.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
