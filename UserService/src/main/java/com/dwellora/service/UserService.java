@@ -16,4 +16,5 @@ public interface UserService {
 
     UserResponseDTO getUserById(Integer userId);
 
+    LoginResponseDTO login(LoginRequestDTO request);
 }
