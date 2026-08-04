@@ -7,6 +7,8 @@ public class LoginResponseDTO {
     private String fullName;
     private String role;
     private String email;
+    // add field + getter/setter
+    private String token;
 
     public LoginResponseDTO() {}
 
@@ -57,5 +59,12 @@ public class LoginResponseDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+    public void setToken(String token) {
+        this.token = token;
     }
 }
