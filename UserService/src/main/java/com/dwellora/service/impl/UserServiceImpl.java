@@ -9,10 +9,11 @@ import com.dwellora.exception.UserException;
 import com.dwellora.repository.UserRepository;
 import com.dwellora.security.JwtUtil;
 import com.dwellora.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,11 +21,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ApartmentClient apartmentClient;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, ApartmentClient apartmentClient, JwtUtil jwtUtil) {
+    public UserServiceImpl(UserRepository userRepository,
+                           ApartmentClient apartmentClient,
+                           JwtUtil jwtUtil,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.apartmentClient = apartmentClient;
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -38,6 +44,8 @@ public class UserServiceImpl implements UserService {
         User user = mapToEntity(request);
         user.setRole(Role.MANAGER);
         user.setAccountStatus(AccountStatus.ACTIVE);
+        // Encrypt password before saving
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User saved = userRepository.save(user);
 
@@ -49,6 +57,28 @@ public class UserServiceImpl implements UserService {
                 saved.getEmail());
     }
 
+    @Override
+    public LoginResponseDTO login(LoginRequestDTO request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserException("Invalid email or password."));
+
+        if (user.getAccountStatus() != AccountStatus.ACTIVE) {
+            throw new UserException("Account is inactive.");
+        }
+
+        // Verify encrypted password
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new UserException("Invalid email or password.");
+        }
+
+        String token = jwtUtil.generateToken(user.getUserId(), user.getEmail(), user.getRole().name());
+
+        LoginResponseDTO response = new LoginResponseDTO(
+                user.getUserId(), user.getApartmentId(), user.getFullName(),
+                user.getRole().name(), user.getEmail());
+        response.setToken(token);
+        return response;
+    }
 
     @Override
     public List<UserResponseDTO> getAllUsers() {
@@ -57,10 +87,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO getUserById(Integer userId) {
-        User user =
-                userRepository
-                        .findById(userId)
-                        .orElseThrow(() -> new UserException("User not found with id: " + userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not found with id: " + userId));
         return mapToResponse(user);
     }
 
@@ -80,28 +108,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponseDTO login(LoginRequestDTO request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserException("Invalid email or password."));
-
-        if (user.getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new UserException("Account is inactive.");
-        }
-
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new UserException("Invalid email or password.");
-        }
-
-        String token = jwtUtil.generateToken(user.getUserId(), user.getEmail(), user.getRole().name());
-
-        LoginResponseDTO response = new LoginResponseDTO(
-                user.getUserId(), user.getApartmentId(), user.getFullName(),
-                user.getRole().name(), user.getEmail());
-        response.setToken(token);
-        return response;
-    }
-
-    @Override
     public LoginResponseDTO activateAccount(ActivateAccountDTO dto) {
         User user = userRepository.findByActivationToken(dto.getToken())
                 .orElseThrow(() -> new UserException("Invalid activation token."));
@@ -114,7 +120,8 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Activation token has expired.");
         }
 
-        user.setPassword(dto.getNewPassword());
+        // in activateAccount()
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         user.setAccountStatus(AccountStatus.ACTIVE);
         user.setActivationToken(null);
         user.setActivationTokenExpiry(null);
