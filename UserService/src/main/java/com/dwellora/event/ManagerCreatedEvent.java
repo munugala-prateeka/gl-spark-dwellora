@@ -6,6 +6,7 @@ public class ManagerCreatedEvent {
     private Integer apartmentId;
     private String managerName;
     private String managerEmail;
+    private String activationToken;
 
     public ManagerCreatedEvent() {}
 
@@ -40,4 +41,13 @@ public class ManagerCreatedEvent {
     public void setManagerEmail(String managerEmail) {
         this.managerEmail = managerEmail;
     }
+    
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
+    }
+
 }
