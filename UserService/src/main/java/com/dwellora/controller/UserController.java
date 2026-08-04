@@ -38,4 +38,8 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @PostMapping("/login")
+    public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO request) {
+        return userService.login(request);
+    }
 }

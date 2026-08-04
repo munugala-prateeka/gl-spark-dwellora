@@ -74,6 +74,29 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public LoginResponseDTO login(LoginRequestDTO request) {
+        User user =
+                userRepository
+                        .findByEmail(request.getEmail())
+                        .orElseThrow(() -> new UserException("Invalid email or password."));
+
+        if (user.getAccountStatus() != AccountStatus.ACTIVE) {
+            throw new UserException("Account is inactive.");
+        }
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new UserException("Invalid email or password.");
+        }
+
+        return new LoginResponseDTO(
+                user.getUserId(),
+                user.getApartmentId(),
+                user.getFullName(),
+                user.getRole().name(),
+                user.getEmail());
+    }
+
     private User mapToEntity(UserRequestDTO request) {
         User user = new User();
         user.setApartmentId(request.getApartmentId());
