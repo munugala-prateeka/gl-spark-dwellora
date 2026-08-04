@@ -34,4 +34,23 @@ public class EmailServiceImpl implements EmailService {
             throw new NotificationException("Failed to send activation email to " + email + ": " + ex.getMessage());
         }
     }
+
+    @Override
+    public void sendResidentWelcomeEmail(String name, String email, String activationToken) {
+        try {
+            SimpleMailMessage mail = new SimpleMailMessage();
+            mail.setTo(email);
+            mail.setSubject("Welcome to Dwellora — Activate Your Account");
+            mail.setText(
+                    "Hello " + name + ",\n\n"
+                            + "Your apartment manager has added you to Dwellora.\n\n"
+                            + "Please activate your account and set your password:\n\n"
+                            + "http://localhost:5173/activate?token=" + activationToken + "\n\n"
+                            + "This link expires in 24 hours.\n\n"
+                            + "Regards,\nDwellora Team");
+            mailSender.send(mail);
+        } catch (Exception ex) {
+            throw new NotificationException("Failed to send activation email to " + email + ": " + ex.getMessage());
+        }
+    }
 }
