@@ -11,7 +11,9 @@ import com.dwellora.security.JwtUtil;
 import com.dwellora.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.dwellora.event.ResidentCreatedEvent;
+import com.dwellora.kafka.ResidentProducer;
+import java.util.UUID;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,15 +24,18 @@ public class UserServiceImpl implements UserService {
     private final ApartmentClient apartmentClient;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final ResidentProducer residentProducer;
 
     public UserServiceImpl(UserRepository userRepository,
                            ApartmentClient apartmentClient,
                            JwtUtil jwtUtil,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           ResidentProducer residentProducer) {
         this.userRepository = userRepository;
         this.apartmentClient = apartmentClient;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
+        this.residentProducer = residentProducer;
     }
 
     @Override
@@ -136,6 +141,72 @@ public class UserServiceImpl implements UserService {
                 saved.getEmail());
     }
 
+    @Override
+    public UserResponseDTO createResident(ResidentRequestDTO request) {
+        validateApartmentAndEmail(request.getApartmentId(), request.getEmail());
+
+        User user = mapResidentToEntity(request);
+        user.setRole(Role.RESIDENT);
+        user.setAccountStatus(AccountStatus.PENDING_ACTIVATION);
+        user.setPassword(null);
+
+        String token = UUID.randomUUID().toString();
+        user.setActivationToken(token);
+        user.setActivationTokenExpiry(LocalDateTime.now().plusHours(24));
+
+        User saved = userRepository.save(user);
+
+        ResidentCreatedEvent event = new ResidentCreatedEvent();
+        event.setUserId(saved.getUserId());
+        event.setApartmentId(saved.getApartmentId());
+        event.setResidentName(saved.getFullName());
+        event.setResidentEmail(saved.getEmail());
+        event.setActivationToken(token);
+        residentProducer.publish(event);
+
+        return mapToResponse(saved);
+    }
+
+    @Override
+    public List<UserResponseDTO> getResidentsByApartment(Integer apartmentId) {
+        return userRepository.findByApartmentIdAndRole(apartmentId, Role.RESIDENT).stream()
+                .filter(user -> user.getAccountStatus() != AccountStatus.INACTIVE) // Filter out deleted/inactive
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public UserResponseDTO updateResident(Integer userId, UserUpdateRequestDTO request) {
+        User existing = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not found with id: " + userId));
+
+        existing.setFullName(request.getFullName());
+        existing.setEmail(request.getEmail());
+        existing.setPhone(request.getPhone());
+        existing.setFlatNumber(request.getFlatNumber());
+
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            existing.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        User updated = userRepository.save(existing);
+        return mapToResponse(updated);
+    }
+
+    @Override
+    public void deleteResident(Integer userId) {
+        User existing = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not found with id: " + userId));
+
+        if (existing.getRole() == Role.MANAGER) {
+            throw new UserException("Manager cannot be deleted.");
+        }
+
+        // Soft Delete
+        existing.setAccountStatus(AccountStatus.INACTIVE);
+        userRepository.save(existing);
+    }
+
     private User mapToEntity(UserRequestDTO request) {
         User user = new User();
         user.setApartmentId(request.getApartmentId());
@@ -157,5 +228,15 @@ public class UserServiceImpl implements UserService {
                 user.getFlatNumber(),
                 user.getRole(),
                 user.getAccountStatus());
+    }
+
+    private User mapResidentToEntity(ResidentRequestDTO request) {
+        User user = new User();
+        user.setApartmentId(request.getApartmentId());
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setFlatNumber(request.getFlatNumber());
+        return user;
     }
 }
