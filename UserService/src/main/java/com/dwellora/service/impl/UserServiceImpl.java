@@ -7,6 +7,7 @@ import com.dwellora.enums.AccountStatus;
 import com.dwellora.enums.Role;
 import com.dwellora.exception.UserException;
 import com.dwellora.repository.UserRepository;
+import com.dwellora.security.JwtUtil;
 import com.dwellora.service.UserService;
 
 import java.time.LocalDateTime;
@@ -18,10 +19,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ApartmentClient apartmentClient;
+    private final JwtUtil jwtUtil;
 
-    public UserServiceImpl(UserRepository userRepository, ApartmentClient apartmentClient) {
+    public UserServiceImpl(UserRepository userRepository, ApartmentClient apartmentClient, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.apartmentClient = apartmentClient;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -78,10 +81,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
-        User user =
-                userRepository
-                        .findByEmail(request.getEmail())
-                        .orElseThrow(() -> new UserException("Invalid email or password."));
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserException("Invalid email or password."));
 
         if (user.getAccountStatus() != AccountStatus.ACTIVE) {
             throw new UserException("Account is inactive.");
@@ -91,12 +92,13 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Invalid email or password.");
         }
 
-        return new LoginResponseDTO(
-                user.getUserId(),
-                user.getApartmentId(),
-                user.getFullName(),
-                user.getRole().name(),
-                user.getEmail());
+        String token = jwtUtil.generateToken(user.getUserId(), user.getEmail(), user.getRole().name());
+
+        LoginResponseDTO response = new LoginResponseDTO(
+                user.getUserId(), user.getApartmentId(), user.getFullName(),
+                user.getRole().name(), user.getEmail());
+        response.setToken(token);
+        return response;
     }
 
     @Override
