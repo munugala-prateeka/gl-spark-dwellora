@@ -42,4 +42,9 @@ public class UserController {
     public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO request) {
         return userService.login(request);
     }
+
+    @PostMapping("/activate")
+    public LoginResponseDTO activateAccount(@Valid @RequestBody ActivateAccountDTO dto) {
+        return userService.activateAccount(dto);
+    }
 }

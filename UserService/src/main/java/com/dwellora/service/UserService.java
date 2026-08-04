@@ -1,11 +1,7 @@
 package com.dwellora.service;
 
-import com.dwellora.dto.LoginRequestDTO;
-import com.dwellora.dto.LoginResponseDTO;
-import com.dwellora.dto.ManagerResponseDTO;
-import com.dwellora.dto.UserRequestDTO;
-import com.dwellora.dto.UserResponseDTO;
-import com.dwellora.dto.UserUpdateRequestDTO;
+import com.dwellora.dto.*;
+
 import java.util.List;
 
 public interface UserService {
@@ -17,4 +13,6 @@ public interface UserService {
     UserResponseDTO getUserById(Integer userId);
 
     LoginResponseDTO login(LoginRequestDTO request);
+
+    LoginResponseDTO activateAccount(ActivateAccountDTO dto);
 }
