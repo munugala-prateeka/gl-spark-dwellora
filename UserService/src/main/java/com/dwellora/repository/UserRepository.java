@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByApartmentIdAndRole(Integer apartmentId, Role role);
 
     List<User> findByRole(Role role);
+
+    Optional<User> findByActivationToken(String activationToken);
 }

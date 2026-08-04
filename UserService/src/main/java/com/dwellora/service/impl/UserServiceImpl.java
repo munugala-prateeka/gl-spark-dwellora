@@ -8,6 +8,8 @@ import com.dwellora.enums.Role;
 import com.dwellora.exception.UserException;
 import com.dwellora.repository.UserRepository;
 import com.dwellora.service.UserService;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -95,6 +97,34 @@ public class UserServiceImpl implements UserService {
                 user.getFullName(),
                 user.getRole().name(),
                 user.getEmail());
+    }
+
+    @Override
+    public LoginResponseDTO activateAccount(ActivateAccountDTO dto) {
+        User user = userRepository.findByActivationToken(dto.getToken())
+                .orElseThrow(() -> new UserException("Invalid activation token."));
+
+        if (user.getAccountStatus() != AccountStatus.PENDING_ACTIVATION) {
+            throw new UserException("Account is already activated.");
+        }
+
+        if (user.getActivationTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new UserException("Activation token has expired.");
+        }
+
+        user.setPassword(dto.getNewPassword());
+        user.setAccountStatus(AccountStatus.ACTIVE);
+        user.setActivationToken(null);
+        user.setActivationTokenExpiry(null);
+
+        User saved = userRepository.save(user);
+
+        return new LoginResponseDTO(
+                saved.getUserId(),
+                saved.getApartmentId(),
+                saved.getFullName(),
+                saved.getRole().name(),
+                saved.getEmail());
     }
 
     private User mapToEntity(UserRequestDTO request) {

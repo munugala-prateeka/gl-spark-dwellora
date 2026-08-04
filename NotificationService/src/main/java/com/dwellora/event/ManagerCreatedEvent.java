@@ -41,7 +41,7 @@ public class ManagerCreatedEvent {
     public void setManagerEmail(String managerEmail) {
         this.managerEmail = managerEmail;
     }
-    
+
     public String getActivationToken() {
         return activationToken;
     }
@@ -49,5 +49,4 @@ public class ManagerCreatedEvent {
     public void setActivationToken(String activationToken) {
         this.activationToken = activationToken;
     }
-
 }

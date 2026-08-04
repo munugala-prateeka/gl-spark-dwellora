@@ -11,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -38,6 +40,12 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
+
+    @Column(name = "activation_token")
+    private String activationToken;
+
+    @Column(name = "activation_token_expiry")
+    private LocalDateTime activationTokenExpiry;
 
     public User() {}
 
@@ -133,4 +141,21 @@ public class User {
     public void setAccountStatus(AccountStatus accountStatus) {
         this.accountStatus = accountStatus;
     }
+
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
+    }
+
+    public LocalDateTime getActivationTokenExpiry() {
+        return activationTokenExpiry;
+    }
+
+    public void setActivationTokenExpiry(LocalDateTime activationTokenExpiry) {
+        this.activationTokenExpiry = activationTokenExpiry;
+    }
+
 }
