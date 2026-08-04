@@ -15,26 +15,23 @@ public class EmailServiceImpl implements EmailService {
         this.mailSender = mailSender;
     }
 
+    // EmailServiceImpl.java — replace sendManagerWelcomeEmail
     @Override
-    public void sendManagerWelcomeEmail(String name, String email) {
+    public void sendManagerWelcomeEmail(String name, String email, String activationToken) {
         try {
             SimpleMailMessage mail = new SimpleMailMessage();
             mail.setTo(email);
-            mail.setSubject("Welcome to Dwellora");
+            mail.setSubject("Welcome to Dwellora — Activate Your Account");
             mail.setText(
-                    "Hello "
-                            + name
-                            + ",\n\n"
-                            + "Your apartment has been approved.\n\n"
-                            + "You can now login to Dwellora.\n\n"
-                            + "Default Password : manager123\n\n"
-                            + "Regards,\n"
-                            + "Dwellora Team");
-
+                    "Hello " + name + ",\n\n"
+                            + "Your apartment community has been approved on Dwellora.\n\n"
+                            + "Please activate your manager account and set your password using the link below:\n\n"
+                            + "http://localhost:5173/activate?token=" + activationToken + "\n\n"
+                            + "This link expires in 24 hours.\n\n"
+                            + "Regards,\nDwellora Team");
             mailSender.send(mail);
         } catch (Exception ex) {
-            throw new NotificationException(
-                    "Failed to send welcome email to " + email + ": " + ex.getMessage());
+            throw new NotificationException("Failed to send activation email to " + email + ": " + ex.getMessage());
         }
     }
 }
