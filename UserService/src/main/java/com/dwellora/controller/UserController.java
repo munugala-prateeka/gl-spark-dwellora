@@ -47,4 +47,24 @@ public class UserController {
     public LoginResponseDTO activateAccount(@Valid @RequestBody ActivateAccountDTO dto) {
         return userService.activateAccount(dto);
     }
+
+    @PostMapping("/residents")
+    public UserResponseDTO createResident(@Valid @RequestBody ResidentRequestDTO request) {
+        return userService.createResident(request);
+    }
+
+    @GetMapping("/apartment/{apartmentId}/residents")
+    public List<UserResponseDTO> getResidentsByApartment(@PathVariable Integer apartmentId) {
+        return userService.getResidentsByApartment(apartmentId);
+    }
+
+    @PutMapping("/{id}")
+    public UserResponseDTO updateResident(@PathVariable Integer id, @Valid @RequestBody UserUpdateRequestDTO request) {
+        return userService.updateResident(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteResident(@PathVariable Integer id) {
+        userService.deleteResident(id);
+    }
 }
