@@ -15,4 +15,12 @@ public interface UserService {
     LoginResponseDTO login(LoginRequestDTO request);
 
     LoginResponseDTO activateAccount(ActivateAccountDTO dto);
+
+    UserResponseDTO createResident(ResidentRequestDTO request);
+
+    List<UserResponseDTO> getResidentsByApartment(Integer apartmentId);
+
+    UserResponseDTO updateResident(Integer userId, UserUpdateRequestDTO request);
+
+    void deleteResident(Integer userId);
 }
