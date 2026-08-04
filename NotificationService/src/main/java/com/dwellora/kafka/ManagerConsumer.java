@@ -17,9 +17,10 @@ public class ManagerConsumer {
         this.emailService = emailService;
     }
 
-    @KafkaListener(topics = "manager-created", groupId = "manager-notification-group", containerFactory = "managerKafkaListenerContainerFactory")
+    @KafkaListener(topics = "manager-created", groupId = "manager-notification-group",
+            containerFactory = "managerKafkaListenerContainerFactory")
     public void consume(ManagerCreatedEvent event) {
-        logger.info("Manager Created Event Received");
+        logger.info("Manager Created Event Received for: {}", event.getManagerEmail());
         emailService.sendManagerWelcomeEmail(event.getManagerName(), event.getManagerEmail(), event.getActivationToken());
     }
 }
