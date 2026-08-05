@@ -11,7 +11,7 @@
     <!-- Parent -->
     <parent>
         <groupId>com.dwellora</groupId>
-        <artifactId>gl-sparks-dwellora</artifactId>
+        <artifactId>gl-spark-dwellora</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
