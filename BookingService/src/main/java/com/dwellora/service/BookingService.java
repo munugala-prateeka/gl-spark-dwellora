@@ -21,10 +21,15 @@ public interface BookingService {
 
     BookingResponseDTO updateBooking(Integer id, BookingRequestDTO bookingRequestDTO);
 
+    void deleteBooking(Integer id);
+
+    BookingResponseDTO cancelBooking(Integer bookingId);
+
     List<BookingResponseDTO> getBookingsByUser(Integer userId);
 
     List<AvailabilityDTO> getAvailability(Integer amenityId, LocalDate bookingDate);
 
-    BookingResponseDTO cancelBooking(Integer bookingId);
+    List<AdminBookingDTO> getBookingsByApartment(Integer apartmentId);
 
+    Long getTodayBookingCount(Integer apartmentId);
 }
