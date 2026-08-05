@@ -29,4 +29,20 @@ public class EventController {
     public ResponseEntity<List<EventResponseDTO>> getUpcomingEvents(@PathVariable Integer apartmentId) {
         return ResponseEntity.ok(eventService.getUpcomingEvents(apartmentId));
     }
+
+    // US-017: RSVP to event
+    @PostMapping("/{eventId}/rsvp")
+    public ResponseEntity<EventResponseDTO> rsvpToEvent(
+            @PathVariable Integer eventId,
+            @RequestParam Integer residentId) {
+        return ResponseEntity.ok(eventService.rsvpToEvent(eventId, residentId));
+    }
+
+    // US-017: Withdraw RSVP from event
+    @DeleteMapping("/{eventId}/rsvp")
+    public ResponseEntity<EventResponseDTO> withdrawRsvp(
+            @PathVariable Integer eventId,
+            @RequestParam Integer residentId) {
+        return ResponseEntity.ok(eventService.withdrawRsvp(eventId, residentId));
+    }
 }
