@@ -24,6 +24,7 @@
         <module>NotificationService</module>
         <module>OnboardingService</module>
         <module>MaintenanceService</module>
+        <module>NoticeService</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
