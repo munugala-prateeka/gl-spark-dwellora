@@ -20,9 +20,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorInfo("Validation Failed", errors.toString()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ComplaintException.class)
-    public ResponseEntity<ErrorInfo> handleComplaintException(ComplaintException ex) {
-        return new ResponseEntity<>(new ErrorInfo("Complaint Error", ex.getMessage()), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(NoticeException.class)
+    public ResponseEntity<ErrorInfo> handleComplaintException(NoticeException ex) {
+        return new ResponseEntity<>(new ErrorInfo("Notice Error", ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
