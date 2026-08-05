@@ -5,6 +5,8 @@ import com.dwellora.dto.EventResponseDTO;
 import com.dwellora.entity.Event;
 import com.dwellora.entity.Rsvp;
 import com.dwellora.event.EventCreatedEvent;
+import com.dwellora.event.RsvpCancelledEvent;
+import com.dwellora.event.RsvpConfirmedEvent;
 import com.dwellora.exception.EventException;
 import com.dwellora.repository.EventRepository;
 import com.dwellora.repository.RsvpRepository;
@@ -88,14 +90,24 @@ public class EventServiceImpl implements EventService {
             throw new EventException("You have already RSVP'd to this event");
         }
 
-        // AC-1: Record RSVP
+        // Save RSVP Record
         Rsvp rsvp = new Rsvp();
         rsvp.setEventId(eventId);
         rsvp.setResidentId(residentId);
         rsvpRepository.save(rsvp);
 
+        // Increment RSVP count
         event.setCurrentRsvps(event.getCurrentRsvps() + 1);
         Event updated = eventRepository.save(event);
+
+        // Optional: Send RSVP Confirmation Event via Kafka for NotificationService
+        try {
+            RsvpConfirmedEvent rsvpEvent = new RsvpConfirmedEvent(residentId, event.getTitle(), event.getEventDate());
+            kafkaTemplate.send("rsvp-confirmed", rsvpEvent);
+            logger.info("Published rsvp-confirmed notification for residentId: {}", residentId);
+        } catch (Exception e) {
+            logger.error("Failed to publish RSVP confirmation event: {}", e.getMessage());
+        }
 
         return mapToResponse(updated);
     }
@@ -109,10 +121,19 @@ public class EventServiceImpl implements EventService {
         Rsvp rsvp = rsvpRepository.findByEventIdAndResidentId(eventId, residentId)
                 .orElseThrow(() -> new EventException("No RSVP found for this event and resident"));
 
-        // AC-3: Release spot
+        // Delete RSVP record and release spot
         rsvpRepository.delete(rsvp);
         event.setCurrentRsvps(Math.max(0, event.getCurrentRsvps() - 1));
         Event updated = eventRepository.save(event);
+
+        // Publish RSVP Cancelled Event via Kafka
+        try {
+            RsvpCancelledEvent cancelledEvent = new RsvpCancelledEvent(residentId, event.getTitle(), event.getEventDate());
+            kafkaTemplate.send("rsvp-cancelled", cancelledEvent);
+            logger.info("Published rsvp-cancelled notification for residentId: {}", residentId);
+        } catch (Exception e) {
+            logger.error("Failed to publish RSVP cancellation event: {}", e.getMessage());
+        }
 
         return mapToResponse(updated);
     }
