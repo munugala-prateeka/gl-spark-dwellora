@@ -62,4 +62,9 @@ public class BookingController {
             @Valid @RequestBody BookingRequestDTO bookingRequestDTO) {
         return ResponseEntity.ok(bookingService.updateBooking(id, bookingRequestDTO));
     }
+
+    @PutMapping("/cancel/{bookingId}")
+    public ResponseEntity<BookingResponseDTO> cancelBooking(@PathVariable Integer bookingId) {
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+    }
 }
