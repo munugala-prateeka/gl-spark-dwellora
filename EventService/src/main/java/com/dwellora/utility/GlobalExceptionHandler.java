@@ -1,11 +1,12 @@
 package com.dwellora.utility;
 
-import com.dwellora.exception.ComplaintException;
+import com.dwellora.exception.EventException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,9 +21,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorInfo("Validation Failed", errors.toString()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoticeException.class)
-    public ResponseEntity<ErrorInfo> handleComplaintException(NoticeException ex) {
-        return new ResponseEntity<>(new ErrorInfo("Notice Error", ex.getMessage()), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(EventException.class)
+    public ResponseEntity<ErrorInfo> handleComplaintException(EventException ex) {
+        return new ResponseEntity<>(new ErrorInfo("Event Error", ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
