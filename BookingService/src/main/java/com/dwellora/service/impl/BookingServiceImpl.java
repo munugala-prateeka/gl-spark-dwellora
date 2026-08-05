@@ -265,6 +265,17 @@ public class BookingServiceImpl implements BookingService {
         return list;
     }
 
+    @Override
+    @Transactional
+    public BookingResponseDTO cancelBooking(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found with ID: " + bookingId));
+
+        booking.setBookingStatus(BookingStatus.CANCELLED);
+        Booking saved = bookingRepository.save(booking);
+        return mapToResponseDTOWithClient(saved);
+    }
+
     private BookingResponseDTO mapToResponseDTOWithClient(Booking booking) {
         String amenityName = "Unknown";
         try {
