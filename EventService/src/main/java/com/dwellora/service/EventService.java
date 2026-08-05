@@ -1,4 +1,11 @@
 package com.dwellora.service;
 
-public class EventService {
+import com.dwellora.dto.EventRequestDTO;
+import com.dwellora.dto.EventResponseDTO;
+
+import java.util.List;
+
+public interface EventService {
+    EventResponseDTO createEvent(EventRequestDTO request);
+    List<EventResponseDTO> getUpcomingEvents(Integer apartmentId);
 }
