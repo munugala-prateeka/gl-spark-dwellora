@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
             throw new UserException("Apartment not found or Apartment Service unavailable");
         }
 
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.findByEmailAndAccountStatusNot(email, AccountStatus.INACTIVE).isPresent()) {
             throw new UserException("Email already exists");
         }
     }
