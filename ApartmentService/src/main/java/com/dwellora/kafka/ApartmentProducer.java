@@ -11,7 +11,7 @@ public class ApartmentProducer {
 
     private static final String TOPIC = "apartment-created";
 
-    private static final Logger logger = LoggerFactory.getLogger(CommunityConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApartmentProducer.class);
 
     private final KafkaTemplate<String, ApartmentCreatedEvent> kafkaTemplate;
 
