@@ -1,4 +1,8 @@
 package com.dwellora.exception;
 
-public class EventException {
+public class EventException extends RuntimeException {
+
+    public EventException(String message) {
+        super(message);
+    }
 }
