@@ -218,6 +218,26 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
+    public void deleteBooking(Integer bookingId) {
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new BookingNotFoundException("Booking not found with ID: " + bookingId);
+        }
+        bookingRepository.deleteById(bookingId);
+    }
+
+    @Override
+    @Transactional
+    public BookingResponseDTO cancelBooking(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found with ID: " + bookingId));
+
+        booking.setBookingStatus(BookingStatus.CANCELLED);
+        Booking saved = bookingRepository.save(booking);
+        return mapToResponseDTOWithClient(saved);
+    }
+
+    @Override
     public List<BookingResponseDTO> getBookingsByUser(Integer userId) {
         List<Booking> bookings = bookingRepository.findByUserId(userId);
 
@@ -266,14 +286,48 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
-    public BookingResponseDTO cancelBooking(Integer bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Booking not found with ID: " + bookingId));
+    public List<AdminBookingDTO> getBookingsByApartment(Integer apartmentId) {
+        List<Booking> bookings = bookingRepository.findAll();
+        List<AdminBookingDTO> result = new ArrayList<>();
 
-        booking.setBookingStatus(BookingStatus.CANCELLED);
-        Booking saved = bookingRepository.save(booking);
-        return mapToResponseDTOWithClient(saved);
+        for (Booking booking : bookings) {
+            AmenityDTO amenity = amenityClient.getAmenityById(booking.getAmenityId());
+            if (amenity == null || !amenity.getApartmentId().equals(apartmentId)) {
+                continue;
+            }
+
+            UserDTO user = userClient.getUserById(booking.getUserId());
+            String userName = (user != null) ? user.getFullName() : "Unknown";
+            String flatNo = (user != null) ? user.getFlatNumber() : "N/A";
+
+            result.add(new AdminBookingDTO(
+                    booking.getBookingId(),
+                    userName,
+                    flatNo,
+                    amenity.getAmenityName(),
+                    booking.getBookingDate(),
+                    booking.getStartTime(),
+                    booking.getEndTime(),
+                    booking.getBookingStatus()
+            ));
+        }
+
+        return result;
+    }
+
+    @Override
+    public Long getTodayBookingCount(Integer apartmentId) {
+        List<Booking> bookings = bookingRepository.findByBookingDate(LocalDate.now());
+        long count = 0;
+
+        for (Booking booking : bookings) {
+            AmenityDTO amenity = amenityClient.getAmenityById(booking.getAmenityId());
+            if (amenity != null && amenity.getApartmentId().equals(apartmentId)) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private BookingResponseDTO mapToResponseDTOWithClient(Booking booking) {

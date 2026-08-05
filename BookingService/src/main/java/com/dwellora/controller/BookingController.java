@@ -44,6 +44,24 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingsByDate(bookingDate));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<BookingResponseDTO> updateBooking(
+            @PathVariable Integer id,
+            @Valid @RequestBody BookingRequestDTO bookingRequestDTO) {
+        return ResponseEntity.ok(bookingService.updateBooking(id, bookingRequestDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBooking(@PathVariable Integer id) {
+        bookingService.deleteBooking(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/cancel/{bookingId}")
+    public ResponseEntity<BookingResponseDTO> cancelBooking(@PathVariable Integer bookingId) {
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingResponseDTO>> getBookingsByUser(@PathVariable Integer userId) {
         return ResponseEntity.ok(bookingService.getBookingsByUser(userId));
@@ -56,15 +74,13 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getAvailability(amenityId, bookingDate));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BookingResponseDTO> updateBooking(
-            @PathVariable Integer id,
-            @Valid @RequestBody BookingRequestDTO bookingRequestDTO) {
-        return ResponseEntity.ok(bookingService.updateBooking(id, bookingRequestDTO));
+    @GetMapping("/apartment/{apartmentId}")
+    public ResponseEntity<List<AdminBookingDTO>> getBookingsByApartment(@PathVariable Integer apartmentId) {
+        return ResponseEntity.ok(bookingService.getBookingsByApartment(apartmentId));
     }
 
-    @PutMapping("/cancel/{bookingId}")
-    public ResponseEntity<BookingResponseDTO> cancelBooking(@PathVariable Integer bookingId) {
-        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+    @GetMapping("/apartment/{apartmentId}/today/count")
+    public ResponseEntity<Long> getTodayBookingCount(@PathVariable Integer apartmentId) {
+        return ResponseEntity.ok(bookingService.getTodayBookingCount(apartmentId));
     }
 }
