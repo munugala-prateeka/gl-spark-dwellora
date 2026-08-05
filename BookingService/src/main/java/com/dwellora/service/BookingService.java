@@ -24,4 +24,7 @@ public interface BookingService {
     List<BookingResponseDTO> getBookingsByUser(Integer userId);
 
     List<AvailabilityDTO> getAvailability(Integer amenityId, LocalDate bookingDate);
+
+    BookingResponseDTO cancelBooking(Integer bookingId);
+
 }
