@@ -1,4 +1,14 @@
 package com.dwellora.dto;
 
-public record EventResponse() {
-}
+import java.time.LocalDateTime;
+
+public record EventResponseDTO(
+        Integer eventId,
+        Integer apartmentId,
+        String title,
+        String description,
+        LocalDateTime eventDate,
+        Integer capacity,
+        Integer currentRsvps,
+        boolean isFull
+) {}
