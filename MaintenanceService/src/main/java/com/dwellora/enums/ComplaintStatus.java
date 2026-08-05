@@ -1,4 +1,7 @@
 package com.dwellora.enums;
 
-public class c {
+public enum ComplaintStatus {
+    OPEN,
+    IN_PROGRESS,
+    RESOLVED
 }
