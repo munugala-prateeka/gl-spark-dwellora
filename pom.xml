@@ -23,6 +23,7 @@
         <module>BookingService</module>
         <module>NotificationService</module>
         <module>OnboardingService</module>
+        <module>MaintenanceService</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
