@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,8 +45,9 @@ import static org.mockito.Mockito.when;
  * <ul>
  *   <li>US-001 - User Authentication &amp; Role-Based Login</li>
  *   <li>US-004 - Manager Account Activation</li>
- *   US-005 - Manager Adds a Resident</li>
- *   US-006 - Resident Account Activation</li>
+ *   <li>US-005 - Manager Adds a Resident</li>
+ *   <li>US-006 - Resident Account Activation</li>
+ *   <li>US-014 - Get All Users</li>
  *
  */
 @ExtendWith(MockitoExtension.class)
@@ -360,5 +362,24 @@ class UserServiceImplTest {
         when(userRepository.findById(999)).thenReturn(Optional.empty());
         UserUpdateRequestDTO update = new UserUpdateRequestDTO();
         assertThrows(UserException.class, () -> userService.updateResident(999, update));
+    }
+
+    // ==========================================
+    // US-014: GET ALL USERS
+    // ==========================================
+
+    @Test
+    @DisplayName("US-014: Should return all users across the platform")
+    void getAllUsers_ReturnsFullList() {
+        // Given
+        when(userRepository.findAll()).thenReturn(List.of(activeManager));
+
+        // When
+        List<UserResponseDTO> results = userService.getAllUsers();
+
+        // Then
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals(Role.MANAGER, results.get(0).getRole());
     }
 }
