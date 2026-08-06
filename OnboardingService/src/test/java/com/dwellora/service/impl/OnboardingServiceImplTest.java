@@ -227,5 +227,45 @@ class OnboardingServiceImplTest {
 
         assertTrue(exception.getMessage().contains("Onboarding request not found with id : 99"));
         verify(repository, never()).save(any());
+
+
+    }
+
+    // ==========================================
+// 5. GET ALL REQUESTS TESTS (US-013 / US-014)
+// ==========================================
+
+    @Test
+    @DisplayName("US-013/US-014: Should return all onboarding requests regardless of status")
+    void getAllRequests_ReturnsFullHistory() {
+        // Given
+        OnboardingRequest approved = new OnboardingRequest();
+        approved.setRequestId(2);
+        approved.setApartmentName("Blue Ridge");
+        approved.setStatus(OnboardingStatus.APPROVED);
+
+        when(repository.findAll()).thenReturn(List.of(pendingRequest, approved));
+
+        // When
+        List<OnboardingResponseDTO> results = onboardingService.getAllRequests();
+
+        // Then
+        assertNotNull(results);
+        assertEquals(2, results.size());
+        verify(repository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("US-014: Should return empty list when no onboarding requests exist")
+    void getAllRequests_ReturnsEmptyList() {
+        // Given
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+
+        // When
+        List<OnboardingResponseDTO> results = onboardingService.getAllRequests();
+
+        // Then
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
     }
 }
