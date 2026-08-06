@@ -138,6 +138,14 @@ public class EventServiceImpl implements EventService {
         return mapToResponse(updated);
     }
 
+    @Override
+    public List<Integer> getMyRsvpedEventIds(Integer residentId) {
+        return rsvpRepository.findByResidentId(residentId)
+                .stream()
+                .map(Rsvp::getEventId)
+                .toList();
+    }
+
     private EventResponseDTO mapToResponse(Event e) {
         boolean isFull = e.getCapacity() != null && e.getCurrentRsvps() >= e.getCapacity();
         return new EventResponseDTO(

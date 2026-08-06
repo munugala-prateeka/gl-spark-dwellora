@@ -10,4 +10,5 @@ public interface EventService {
     List<EventResponseDTO> getUpcomingEvents(Integer apartmentId);
     EventResponseDTO rsvpToEvent(Integer eventId, Integer residentId);
     EventResponseDTO withdrawRsvp(Integer eventId, Integer residentId);
+    List<Integer> getMyRsvpedEventIds(Integer residentId);
 }
