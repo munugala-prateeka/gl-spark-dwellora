@@ -35,6 +35,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Link as RouterLink } from "react-router-dom";
+import swimmingPool from "../assets/swimming_pool.jpg";
+import gym from "../assets/gym.jpg";
+import apartment from "../assets/apartment.jpg";
 
 const fadeUp = keyframes`
   from { opacity: 0; transform: translateY(24px); }
@@ -61,6 +64,12 @@ const TERRA_DARK = "#A24A2C";
 const GOLD = "#B08442";
 const GOLD_DARK = "#8F6A31";
 const SAGE = "#6B8F52";
+
+const IMAGES = {
+  apartment: apartment,
+  pool: swimmingPool,
+  gym: gym,
+};
 
 const features = [
   {
@@ -315,8 +324,8 @@ export default function LandingPage() {
       <Box
         sx={{
           position: "relative",
-          pt: { xs: 14, md: 22 },
-          pb: { xs: 10, md: 14 },
+          pt: { xs: 14, md: 18 },
+          pb: { xs: 8, md: 10 },
           overflow: "hidden",
         }}
       >
@@ -453,7 +462,7 @@ export default function LandingPage() {
           </Box>
         </Container>
 
-        <Stack sx={{ alignItems: "center", opacity: 0.65 }}>
+        <Stack sx={{ alignItems: "center", opacity: 0.65, mt: 2 }}>
           <Typography variant="caption" sx={{ color: MOSS_LIGHT }}>
             Explore the workflow
           </Typography>
@@ -530,7 +539,7 @@ export default function LandingPage() {
             </Typography>
           </Box>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={3}> 
             {features.map((f) => (
               <Grid key={f.title} size={{ xs: 12, sm: 6, md: 4 }}>
                 <Card
@@ -567,6 +576,34 @@ export default function LandingPage() {
                     <Typography variant="body2" sx={{ color: MOSS_LIGHT, lineHeight: 1.7 }}>
                       {f.description}
                     </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: PAPER, borderTop: `1px solid ${theme.palette.divider}`, borderBottom: `1px solid ${theme.palette.divider}` }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: "center", mb: 5 }}>
+            <Typography variant="h3" sx={{ fontWeight: 800, fontSize: { xs: "1.6rem", md: "2.2rem" }, color: MOSS }}>
+              Where community comes to life
+            </Typography>
+            <Typography sx={{ color: MOSS_LIGHT, mt: 1 }}>Built for every corner of your society.</Typography>
+          </Box>
+          <Grid container spacing={3}>
+            {[
+              { img: IMAGES.apartment, title: "Apartment Living", desc: "Your entire society — blocks, flats, and residents — organized in one place." },
+              { img: IMAGES.pool, title: "Swimming Pool & Amenities", desc: "Book slots fairly with per-flat and per-person policies and live availability." },
+              { img: IMAGES.gym, title: "Fitness & Recreation", desc: "Gym, courts, and halls with capacity, hours, and queue-free booking." },
+            ].map((item) => (
+              <Grid key={item.title} size={{ xs: 12, md: 4 }}>
+                <Card sx={{ borderRadius: 3, overflow: "hidden", bgcolor: CREAM, height: "100%" }}>
+                  <Box component="img" src={item.img} alt={item.title} loading="lazy" sx={{ width: "100%", height: 220, objectFit: "cover", display: "block" }} />
+                  <CardContent sx={{ p: 2.5 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: MOSS }}>{item.title}</Typography>
+                    <Typography variant="body2" sx={{ color: MOSS_LIGHT, mt: 0.8, lineHeight: 1.6 }}>{item.desc}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
