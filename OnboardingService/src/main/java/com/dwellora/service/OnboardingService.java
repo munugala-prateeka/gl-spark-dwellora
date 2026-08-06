@@ -13,4 +13,6 @@ public interface OnboardingService {
     OnboardingResponseDTO approveRequest(Integer requestId);
 
     OnboardingResponseDTO rejectRequest(Integer requestId);
+
+    List<OnboardingResponseDTO> getAllRequests();
 }
