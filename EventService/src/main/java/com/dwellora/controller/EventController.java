@@ -45,4 +45,9 @@ public class EventController {
             @RequestParam Integer residentId) {
         return ResponseEntity.ok(eventService.withdrawRsvp(eventId, residentId));
     }
+
+    @GetMapping("/rsvps/{residentId}")
+    public ResponseEntity<List<Integer>> getMyRsvps(@PathVariable Integer residentId) {
+        return ResponseEntity.ok(eventService.getMyRsvpedEventIds(residentId));
+    }
 }
