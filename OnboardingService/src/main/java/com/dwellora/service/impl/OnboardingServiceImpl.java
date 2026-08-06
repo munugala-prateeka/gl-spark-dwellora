@@ -87,6 +87,14 @@ public class OnboardingServiceImpl implements OnboardingService {
         return mapToResponse(saved);
     }
 
+    @Override
+    public List<OnboardingResponseDTO> getAllRequests() {
+        return repository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     private OnboardingResponseDTO mapToResponse(OnboardingRequest request) {
         OnboardingResponseDTO response = new OnboardingResponseDTO();
         response.setRequestId(request.getRequestId());
