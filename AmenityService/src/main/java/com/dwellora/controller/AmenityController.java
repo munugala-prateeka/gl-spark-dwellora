@@ -6,6 +6,8 @@ import com.dwellora.enums.AmenityType;
 import com.dwellora.service.AmenityService;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,38 +28,40 @@ public class AmenityController {
     }
 
     @PostMapping
-    public AmenityResponseDTO addAmenity(@Valid @RequestBody AmenityRequestDTO request) {
-        return amenityService.addAmenity(request);
+    public ResponseEntity<AmenityResponseDTO> addAmenity(@Valid @RequestBody AmenityRequestDTO request) {
+        AmenityResponseDTO response = amenityService.addAmenity(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public List<AmenityResponseDTO> getAllAmenities() {
-        return amenityService.getAllAmenities();
+    public ResponseEntity<List<AmenityResponseDTO>> getAllAmenities() {
+        return ResponseEntity.ok(amenityService.getAllAmenities());
     }
 
     @GetMapping("/{id}")
-    public AmenityResponseDTO getAmenityById(@PathVariable Integer id) {
-        return amenityService.getAmenityById(id);
+    public ResponseEntity<AmenityResponseDTO> getAmenityById(@PathVariable Integer id) {
+        return ResponseEntity.ok(amenityService.getAmenityById(id));
     }
 
     @PutMapping("/{id}")
-    public AmenityResponseDTO updateAmenity(
+    public ResponseEntity<AmenityResponseDTO> updateAmenity(
             @PathVariable Integer id, @Valid @RequestBody AmenityRequestDTO request) {
-        return amenityService.updateAmenity(id, request);
+        return ResponseEntity.ok(amenityService.updateAmenity(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAmenity(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteAmenity(@PathVariable Integer id) {
         amenityService.deleteAmenity(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/apartment/{id}")
-    public List<AmenityResponseDTO> getAmenitiesByApartment(@PathVariable Integer id) {
-        return amenityService.getAmenitiesByApartment(id);
+    public ResponseEntity<List<AmenityResponseDTO>> getAmenitiesByApartment(@PathVariable Integer id) {
+        return ResponseEntity.ok(amenityService.getAmenitiesByApartment(id));
     }
 
     @GetMapping("/types")
-    public AmenityType[] getAmenityTypes() {
-        return AmenityType.values();
+    public ResponseEntity<AmenityType[]> getAmenityTypes() {
+        return ResponseEntity.ok(AmenityType.values());
     }
 }

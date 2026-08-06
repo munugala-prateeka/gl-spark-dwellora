@@ -5,6 +5,8 @@ import com.dwellora.dto.ComplaintResponseDTO;
 import com.dwellora.dto.ComplaintUpdateDTO;
 import com.dwellora.service.ComplaintService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,26 +22,27 @@ public class ComplaintController {
     }
 
     @PostMapping
-    public ComplaintResponseDTO raiseComplaint(
+    public ResponseEntity<ComplaintResponseDTO> raiseComplaint(
             @RequestParam Integer userId,
             @Valid @RequestBody ComplaintRequestDTO request) {
-        return complaintService.raiseComplaint(userId, request);
+        ComplaintResponseDTO response = complaintService.raiseComplaint(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/user/{userId}")
-    public List<ComplaintResponseDTO> getComplaintsByUser(@PathVariable Integer userId) {
-        return complaintService.getComplaintsByUser(userId);
+    public ResponseEntity<List<ComplaintResponseDTO>> getComplaintsByUser(@PathVariable Integer userId) {
+        return ResponseEntity.ok(complaintService.getComplaintsByUser(userId));
     }
 
     @GetMapping("/apartment/{apartmentId}")
-    public List<ComplaintResponseDTO> getComplaintsByApartment(@PathVariable Integer apartmentId) {
-        return complaintService.getComplaintsByApartment(apartmentId);
+    public ResponseEntity<List<ComplaintResponseDTO>> getComplaintsByApartment(@PathVariable Integer apartmentId) {
+        return ResponseEntity.ok(complaintService.getComplaintsByApartment(apartmentId));
     }
 
     @PutMapping("/{id}")
-    public ComplaintResponseDTO updateComplaint(
+    public ResponseEntity<ComplaintResponseDTO> updateComplaint(
             @PathVariable Integer id,
             @Valid @RequestBody ComplaintUpdateDTO request) {
-        return complaintService.updateComplaint(id, request);
+        return ResponseEntity.ok(complaintService.updateComplaint(id, request));
     }
 }

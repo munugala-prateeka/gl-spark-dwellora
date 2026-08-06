@@ -5,6 +5,8 @@ import com.dwellora.dto.ApartmentResponseDTO;
 import com.dwellora.service.ApartmentService;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,28 +27,30 @@ public class ApartmentController {
     }
 
     @PostMapping
-    public ApartmentResponseDTO addApartment(@Valid @RequestBody ApartmentRequestDTO dto) {
-        return apartmentService.addApartment(dto);
+    public ResponseEntity<ApartmentResponseDTO> addApartment(@Valid @RequestBody ApartmentRequestDTO dto) {
+        ApartmentResponseDTO response = apartmentService.addApartment(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public List<ApartmentResponseDTO> getAllApartments() {
-        return apartmentService.getAllApartments();
+    public ResponseEntity<List<ApartmentResponseDTO>> getAllApartments() {
+        return ResponseEntity.ok(apartmentService.getAllApartments());
     }
 
     @GetMapping("/{id}")
-    public ApartmentResponseDTO getApartment(@PathVariable Integer id) {
-        return apartmentService.getApartmentById(id);
+    public ResponseEntity<ApartmentResponseDTO> getApartment(@PathVariable Integer id) {
+        return ResponseEntity.ok(apartmentService.getApartmentById(id));
     }
 
     @PutMapping("/{id}")
-    public ApartmentResponseDTO updateApartment(
+    public ResponseEntity<ApartmentResponseDTO> updateApartment(
             @PathVariable Integer id, @Valid @RequestBody ApartmentRequestDTO dto) {
-        return apartmentService.updateApartment(id, dto);
+        return ResponseEntity.ok(apartmentService.updateApartment(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteApartment(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteApartment(@PathVariable Integer id) {
         apartmentService.deleteApartment(id);
+        return ResponseEntity.noContent().build();
     }
 }

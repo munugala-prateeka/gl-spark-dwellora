@@ -4,6 +4,8 @@ import com.dwellora.dto.*;
 import com.dwellora.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,47 +26,51 @@ public class UserController {
     }
 
     @PostMapping("/managers")
-    public ManagerResponseDTO createManager(@Valid @RequestBody UserRequestDTO request) {
-        return userService.createManager(request);
+    public ResponseEntity<ManagerResponseDTO> createManager(@Valid @RequestBody UserRequestDTO request) {
+        ManagerResponseDTO response = userService.createManager(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public List<UserResponseDTO> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public UserResponseDTO getUserById(@PathVariable Integer id) {
-        return userService.getUserById(id);
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PostMapping("/login")
-    public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO request) {
-        return userService.login(request);
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+        return ResponseEntity.ok(userService.login(request));
     }
 
     @PostMapping("/activate")
-    public LoginResponseDTO activateAccount(@Valid @RequestBody ActivateAccountDTO dto) {
-        return userService.activateAccount(dto);
+    public ResponseEntity<LoginResponseDTO> activateAccount(@Valid @RequestBody ActivateAccountDTO dto) {
+        return ResponseEntity.ok(userService.activateAccount(dto));
     }
 
     @PostMapping("/residents")
-    public UserResponseDTO createResident(@Valid @RequestBody ResidentRequestDTO request) {
-        return userService.createResident(request);
+    public ResponseEntity<UserResponseDTO> createResident(@Valid @RequestBody ResidentRequestDTO request) {
+        UserResponseDTO response = userService.createResident(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/apartment/{apartmentId}/residents")
-    public List<UserResponseDTO> getResidentsByApartment(@PathVariable Integer apartmentId) {
-        return userService.getResidentsByApartment(apartmentId);
+    public ResponseEntity<List<UserResponseDTO>> getResidentsByApartment(@PathVariable Integer apartmentId) {
+        return ResponseEntity.ok(userService.getResidentsByApartment(apartmentId));
     }
 
     @PutMapping("/{id}")
-    public UserResponseDTO updateResident(@PathVariable Integer id, @Valid @RequestBody UserUpdateRequestDTO request) {
-        return userService.updateResident(id, request);
+    public ResponseEntity<UserResponseDTO> updateResident(
+            @PathVariable Integer id, @Valid @RequestBody UserUpdateRequestDTO request) {
+        return ResponseEntity.ok(userService.updateResident(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteResident(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteResident(@PathVariable Integer id) {
         userService.deleteResident(id);
+        return ResponseEntity.noContent().build();
     }
 }
