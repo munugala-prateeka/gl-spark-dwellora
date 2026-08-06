@@ -45,4 +45,9 @@ public class OnboardingController {
     public ResponseEntity<OnboardingResponseDTO> rejectRequest(@PathVariable Integer id) {
         return ResponseEntity.ok(service.rejectRequest(id));
     }
+
+    @GetMapping
+    public List<OnboardingResponseDTO> getAllRequests() {
+        return service.getAllRequests();
+    }
 }
