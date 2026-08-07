@@ -15,8 +15,8 @@ public class UserUpdateRequestDTO {
     private String email;
 
     @Pattern(
-            regexp = "^$|^.{6,}$",
-            message = "Password must be at least 6 characters if provided"
+            regexp = "^$|^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&#]).{8,}$",
+            message = "Password must be at least 8 characters and include a letter, a number, and a special character (@$!%*?&#), if provided"
     )
     private String password;
 

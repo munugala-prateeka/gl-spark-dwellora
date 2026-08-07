@@ -6,11 +6,31 @@ import {
 import EventIcon from "@mui/icons-material/Event";
 import PoolIcon from "@mui/icons-material/Pool";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import SportsTennisIcon from "@mui/icons-material/SportsTennis";
+import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
+import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
+import ChildCareIcon from "@mui/icons-material/ChildCare";
+import CelebrationIcon from "@mui/icons-material/Celebration";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import SearchIcon from "@mui/icons-material/Search";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { amenityApi, bookingApi } from "../../api/amenityApi";
 import { useAuth } from "../../auth/AuthContext";
-import type { AmenityResponse, AvailabilitySlot } from "../../api/types";
+import type { AmenityResponse, AmenityType, AvailabilitySlot } from "../../api/types";
+
+const AMENITY_ICONS: Record<AmenityType, React.ReactNode> = {
+  GYM: <FitnessCenterIcon fontSize="small" />,
+  SWIMMING_POOL: <PoolIcon fontSize="small" />,
+  COMMUNITY_HALL: <MeetingRoomIcon fontSize="small" />,
+  BADMINTON_COURT: <SportsTennisIcon fontSize="small" />,
+  TENNIS_COURT: <SportsTennisIcon fontSize="small" />,
+  BASKETBALL_COURT: <SportsBasketballIcon fontSize="small" />,
+  YOGA_STUDIO: <SelfImprovementIcon fontSize="small" />,
+  CHILDRENS_PLAY_AREA: <ChildCareIcon fontSize="small" />,
+  PARTY_HALL: <CelebrationIcon fontSize="small" />,
+  LIBRARY: <MenuBookIcon fontSize="small" />,
+};
 
 export default function BookAmenityTab() {
   const { user } = useAuth();
@@ -106,7 +126,7 @@ export default function BookAmenityTab() {
               <Card onClick={() => openAmenity(a)} sx={{ cursor: "pointer", borderRadius: 3, border: "1px solid #E6DCC9", bgcolor: "#FFFDF9", boxShadow: "0 4px 14px rgba(46,58,37,0.04)", transition: "all .2s", "&:hover": { transform: "translateY(-4px)", borderColor: "#C05F3C", boxShadow: "0 12px 28px rgba(192,95,60,0.14)" } }}>
                 <CardContent sx={{ p: 2.5 }}>
                   <Box sx={{ width: 42, height: 42, borderRadius: 2, bgcolor: "rgba(107,143,82,0.12)", color: "#6B8F52", display: "grid", placeItems: "center", mb: 1.5 }}>
-                    {a.amenityType === "GYM" ? <FitnessCenterIcon fontSize="small"/> : <PoolIcon fontSize="small"/>}
+                    {AMENITY_ICONS[a.amenityType as AmenityType]}
                   </Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#2E3A25", lineHeight: 1.2 }}>{a.amenityName}</Typography>
                   <Chip label={a.amenityType.replaceAll("_", " ")} size="small" sx={{ mt: 0.7, bgcolor: "#FAF5EC", color: "#6B7A5C", fontWeight: 600, fontSize: 11, height: 20 }}/>

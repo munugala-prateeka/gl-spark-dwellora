@@ -1,9 +1,6 @@
 package com.dwellora.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public class UserRequestDTO {
 
@@ -18,7 +15,10 @@ public class UserRequestDTO {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Pattern(
+            regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&#]).{8,}$",
+            message = "Password must be at least 8 characters and include a letter, a number, and a special character (@$!%*?&#)"
+    )
     private String password;
 
     @NotBlank(message = "Phone number is required")
