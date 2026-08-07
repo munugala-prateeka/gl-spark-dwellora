@@ -11,6 +11,8 @@ const MOSS_LIGHT = "#6B7A5C";
 const TERRA = "#C05F3C";
 const TERRA_DARK = "#A24A2C";
 
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&#]).{8,}$/;
+
 export default function ActivatePage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
@@ -29,8 +31,8 @@ export default function ActivatePage() {
       setError("Missing activation token. Please use the link from your email.");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (!PASSWORD_PATTERN.test(password)) {
+      setError("Password must be at least 8 characters and include a letter, a number, and a special character (@$!%*?&#).");
       return;
     }
     if (password !== confirm) {
@@ -88,6 +90,7 @@ export default function ActivatePage() {
               required
               fullWidth
               disabled={success}
+              helperText="At least 8 characters, with a letter, a number, and a special character (@$!%*?&#)"
               sx={inputSx}
             />
             <TextField

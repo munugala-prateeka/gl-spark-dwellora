@@ -10,6 +10,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import PoolIcon from "@mui/icons-material/Pool";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import SportsTennisIcon from "@mui/icons-material/SportsTennis";
+import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
+import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
+import ChildCareIcon from "@mui/icons-material/ChildCare";
+import CelebrationIcon from "@mui/icons-material/Celebration";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { amenityApi } from "../../api/amenityApi";
 import { useAuth } from "../../auth/AuthContext";
 import type { AmenityRequest, AmenityResponse, AmenityType, BookingPolicy } from "../../api/types";
@@ -19,6 +26,19 @@ const emptyForm = (apartmentId: number): AmenityRequest => ({
   apartmentId, amenityName: "", amenityType: "GYM", capacity: 1, available: true,
   openingTime: "06:00:00", closingTime: "22:00:00", bookingPolicy: "PER_PERSON", slotDurationMinutes: 60, maxBookingsPerDay: 1, maxBookingsPerMonth: null,
 });
+
+const AMENITY_ICONS: Record<AmenityType, React.ReactNode> = {
+  GYM: <FitnessCenterIcon fontSize="small" />,
+  SWIMMING_POOL: <PoolIcon fontSize="small" />,
+  COMMUNITY_HALL: <MeetingRoomIcon fontSize="small" />,
+  BADMINTON_COURT: <SportsTennisIcon fontSize="small" />,
+  TENNIS_COURT: <SportsTennisIcon fontSize="small" />,
+  BASKETBALL_COURT: <SportsBasketballIcon fontSize="small" />,
+  YOGA_STUDIO: <SelfImprovementIcon fontSize="small" />,
+  CHILDRENS_PLAY_AREA: <ChildCareIcon fontSize="small" />,
+  PARTY_HALL: <CelebrationIcon fontSize="small" />,
+  LIBRARY: <MenuBookIcon fontSize="small" />,
+};
 
 export default function AmenitiesTab() {
   const { user } = useAuth();
@@ -103,7 +123,7 @@ export default function AmenitiesTab() {
                 <CardContent sx={{ p: 2.5 }}>
                   <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
                     <Box sx={{ width: 42, height: 42, borderRadius: 2, bgcolor: a.available ? "rgba(107,143,82,0.12)" : "#FAF5EC", color: a.available ? "#6B8F52" : "#B08442", display: "grid", placeItems: "center" }}>
-                      {a.amenityType === "GYM" ? <FitnessCenterIcon fontSize="small"/> : <PoolIcon fontSize="small"/>}
+                      {AMENITY_ICONS[a.amenityType]}
                     </Box>
                     <Chip size="small" label={a.available ? "Available" : "Unavailable"} sx={{ fontWeight: 700, bgcolor: a.available ? "#6B8F52" : "#E6DCC9", color: a.available ? "#fff" : "#6B7A5C", height: 22 }} />
                   </Stack>
