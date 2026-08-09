@@ -2,9 +2,12 @@ package com.dwellora.dto;
 
 import com.dwellora.enums.Status;
 
+/**
+ * Data transfer object for apartment response details.
+ */
 public class ApartmentResponseDTO {
 
-    private Integer apartmentId;
+    private Long apartmentId;
     private String apartmentName;
     private String address;
     private String city;
@@ -17,7 +20,7 @@ public class ApartmentResponseDTO {
     public ApartmentResponseDTO() {}
 
     public ApartmentResponseDTO(
-            Integer apartmentId,
+            Long apartmentId,
             String apartmentName,
             String address,
             String city,
@@ -37,11 +40,11 @@ public class ApartmentResponseDTO {
         this.status = status;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 

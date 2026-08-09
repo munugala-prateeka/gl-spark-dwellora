@@ -15,7 +15,8 @@ import CelebrationIcon from "@mui/icons-material/Celebration";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import SearchIcon from "@mui/icons-material/Search";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { amenityApi, bookingApi } from "../../api/amenityApi";
+import { amenityApi } from "../../api/amenityApi";
+import { bookingApi } from "../../api/bookingApi";
 import { useAuth } from "../../auth/AuthContext";
 import type { AmenityResponse, AmenityType, AvailabilitySlot } from "../../api/types";
 
@@ -44,7 +45,7 @@ export default function BookAmenityTab() {
 
   useEffect(() => {
     if (!apartmentId) return;
-    amenityApi.getByApartment(apartmentId).then((all) => setAmenities(all.filter((a) => a.available)))
+    amenityApi.getAll().then((all) => setAmenities(all.filter((a) => a.available)))
       .catch(() => setToast("Could not load amenities."));
   }, [apartmentId]);
 
@@ -68,7 +69,6 @@ export default function BookAmenityTab() {
     const [start, end] = slot.slot.split(" - ");
     try {
       await bookingApi.add({
-        userId: user.userId,
         amenityId: selected.amenityId,
         bookingDate: date,
         startTime: start.length === 5 ? start + ":00" : start,

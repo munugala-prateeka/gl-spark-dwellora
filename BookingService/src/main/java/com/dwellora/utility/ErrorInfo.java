@@ -2,6 +2,9 @@ package com.dwellora.utility;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents error response details for exception handling.
+ */
 public class ErrorInfo {
 
     private LocalDateTime timestamp;
@@ -18,12 +21,27 @@ public class ErrorInfo {
         this.details = details;
     }
 
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
 }

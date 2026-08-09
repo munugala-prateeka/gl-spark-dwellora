@@ -1,28 +1,31 @@
 package com.dwellora.event;
 
+/**
+ * Event published when a manager is created.
+ */
 public class ManagerCreatedEvent {
 
-    private Integer userId;
-    private Integer apartmentId;
+    private Long userId;
+    private Long apartmentId;
     private String managerName;
     private String managerEmail;
     private String activationToken;
 
     public ManagerCreatedEvent() {}
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 
@@ -41,7 +44,7 @@ public class ManagerCreatedEvent {
     public void setManagerEmail(String managerEmail) {
         this.managerEmail = managerEmail;
     }
-    
+
     public String getActivationToken() {
         return activationToken;
     }
@@ -49,5 +52,4 @@ public class ManagerCreatedEvent {
     public void setActivationToken(String activationToken) {
         this.activationToken = activationToken;
     }
-
 }

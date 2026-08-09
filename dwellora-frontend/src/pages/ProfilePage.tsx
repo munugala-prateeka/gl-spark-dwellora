@@ -10,7 +10,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import ShieldIcon from "@mui/icons-material/VerifiedUser";
 import AppShell from "../components/AppShell";
 import { userApi } from "../api/userApi";
-import { apartmentApi } from "../api/onboardingApi";
+import { apartmentApi } from "../api/apartmentApi";
 import { useAuth } from "../auth/AuthContext";
 import type { UserResponse, ApartmentResponse } from "../api/types";
 import { statusColor } from "../theme/theme";

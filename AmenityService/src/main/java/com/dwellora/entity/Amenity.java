@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalTime;
 
+/** Entity representing an amenity record in the database. */
 @Entity
 @Table(name = "amenities")
 public class Amenity {
@@ -19,10 +20,10 @@ public class Amenity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "amenity_id")
-    private Integer amenityId;
+    private Long amenityId;
 
     @Column(name = "apartment_id")
-    private Integer apartmentId;
+    private Long apartmentId;
 
     @Column(name = "amenity_name")
     private String amenityName;
@@ -59,8 +60,8 @@ public class Amenity {
     public Amenity() {}
 
     public Amenity(
-            Integer amenityId,
-            Integer apartmentId,
+            Long amenityId,
+            Long apartmentId,
             String amenityName,
             AmenityType amenityType,
             Integer capacity,
@@ -83,19 +84,19 @@ public class Amenity {
         this.maxBookingsPerDay = maxBookingsPerDay;
     }
 
-    public Integer getAmenityId() {
+    public Long getAmenityId() {
         return amenityId;
     }
 
-    public void setAmenityId(Integer amenityId) {
+    public void setAmenityId(Long amenityId) {
         this.amenityId = amenityId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 

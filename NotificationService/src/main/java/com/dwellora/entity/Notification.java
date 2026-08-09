@@ -11,15 +11,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a system notification.
+ */
 @Entity
 @Table(name = "notifications")
 public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer notificationId;
+    private Long notificationId;
 
-    private Integer userId;
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
@@ -35,19 +38,19 @@ public class Notification {
 
     public Notification() {}
 
-    public Integer getNotificationId() {
+    public Long getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(Integer notificationId) {
+    public void setNotificationId(Long notificationId) {
         this.notificationId = notificationId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

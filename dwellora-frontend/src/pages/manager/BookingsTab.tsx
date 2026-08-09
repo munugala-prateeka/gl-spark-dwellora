@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { Box, Typography, Card, CardContent, Stack, Snackbar, Alert, Chip, TextField, MenuItem } from "@mui/material";
-import { bookingApi } from "../../api/amenityApi";
+import { Box, Typography, Card, CardContent, Chip, Stack, Snackbar, Alert, TextField, MenuItem, IconButton } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
+import { bookingApi } from "../../api/bookingApi";
 import { useAuth } from "../../auth/AuthContext";
 import type { AdminBookingResponse } from "../../api/types";
 import { statusColor } from "../../theme/theme";
@@ -12,6 +13,8 @@ export default function BookingsTab() {
   const [todayCount, setTodayCount] = useState<number | null>(null);
   const [toast, setToast] = useState("");
   const [filter, setFilter] = useState("ALL");
+  const [dateFilter, setDateFilter] = useState("");
+  const [sortBy, setSortBy] = useState("DATE_DESC");
 
   const load = useCallback(() => {
     if (!apartmentId) return;
@@ -20,7 +23,19 @@ export default function BookingsTab() {
   }, [apartmentId]);
   useEffect(load, [load]);
 
-  const filtered = useMemo(() => filter === "ALL" ? bookings : bookings.filter(b => b.bookingStatus === filter), [bookings, filter]);
+  const filteredAndSorted = useMemo(() => {
+    let list = [...bookings];
+    if (filter !== "ALL") list = list.filter(b => b.bookingStatus === filter);
+    if (dateFilter) list = list.filter(b => b.bookingDate === dateFilter);
+    list.sort((a, b) => {
+      if (sortBy === "DATE_DESC") return new Date(`${b.bookingDate}T${b.startTime}`).getTime() - new Date(`${a.bookingDate}T${a.startTime}`).getTime();
+      if (sortBy === "DATE_ASC") return new Date(`${a.bookingDate}T${a.startTime}`).getTime() - new Date(`${b.bookingDate}T${b.startTime}`).getTime();
+      if (sortBy === "AMENITY_ASC") return a.amenityName.localeCompare(b.amenityName);
+      if (sortBy === "AMENITY_DESC") return b.amenityName.localeCompare(a.amenityName);
+      return 0;
+    });
+    return list;
+  }, [bookings, filter, dateFilter, sortBy]);
 
   return (
     <Box>
@@ -29,11 +44,43 @@ export default function BookingsTab() {
           <Typography variant="h6" sx={{ fontWeight: 800, color: "#2E3A25" }}>Bookings</Typography>
           <Typography variant="body2" sx={{ color: "#6B7A5C" }}>{bookings.length} total · {bookings.filter(b=>b.bookingStatus==="BOOKED").length} active</Typography>
         </Box>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-          <TextField select size="small" value={filter} onChange={e=>setFilter(e.target.value)} sx={{ minWidth: 140, bgcolor: "#FFFDF9" }}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ alignItems: { xs: "stretch", sm: "center" } }}>
+          <TextField select size="small" value={filter} onChange={e=>setFilter(e.target.value)} sx={{ minWidth: 135, bgcolor: "#FFFDF9" }}>
             <MenuItem value="ALL">All statuses</MenuItem><MenuItem value="BOOKED">Booked</MenuItem><MenuItem value="CANCELLED">Cancelled</MenuItem>
           </TextField>
-          <Card sx={{ minWidth: 130, bgcolor: "#C05F3C", color: "#fff", borderRadius: 2.5, boxShadow: "0 6px 16px rgba(192,95,60,0.25)" }}>
+          <TextField
+            size="small"
+            type="date"
+            label="Filter by date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+              input: {
+                endAdornment: dateFilter ? (
+                  <IconButton
+                    size="small"
+                    onClick={() => setDateFilter("")}
+                  >
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                ) : undefined,
+              },
+            }}
+            sx={{
+              bgcolor: "#FFFDF9",
+              minWidth: 170,
+            }}
+          />
+          <TextField select size="small" value={sortBy} onChange={e=>setSortBy(e.target.value)} sx={{ minWidth: 155, bgcolor: "#FFFDF9" }} label="Sort by">
+            <MenuItem value="DATE_DESC">Date: Newest first</MenuItem>
+            <MenuItem value="DATE_ASC">Date: Oldest first</MenuItem>
+            <MenuItem value="AMENITY_ASC">Amenity A–Z</MenuItem>
+            <MenuItem value="AMENITY_DESC">Amenity Z–A</MenuItem>
+          </TextField>
+          <Card sx={{ minWidth: 110, bgcolor: "#C05F3C", color: "#fff", borderRadius: 2.5, boxShadow: "0 6px 16px rgba(192,95,60,0.25)" }}>
             <CardContent sx={{ py: 1.2, px: 2, "&:last-child": { pb: 1.2 } }}>
               <Typography variant="caption" sx={{ opacity: 0.85, fontWeight: 700, letterSpacing: 0.5 }}>TODAY</Typography>
               <Typography variant="h5" sx={{ fontWeight: 900, lineHeight: 1 }}>{todayCount ?? "—"}</Typography>
@@ -51,7 +98,7 @@ export default function BookingsTab() {
               ))}</Box>
             </Box>
             <Box component="tbody">
-              {filtered.map((b) => (
+              {filteredAndSorted.map((b) => (
                 <Box component="tr" key={b.bookingId} sx={{ borderBottom: "1px solid #F0EDD8", "&:last-child": { borderBottom: 0 }, "&:hover": { bgcolor: "#FAF5EC" }, transition: ".15s" }}>
                   <Box component="td" sx={{ px: 2.5, py: 1.8, color: "#2E3A25", fontWeight: 700, whiteSpace: "nowrap" }}>{b.residentName}</Box>
                   <Box component="td" sx={{ px: 2.5, py: 1.8 }}><Chip label={b.flatNumber} size="small" sx={{ bgcolor: "#E9EBDD", color: "#2E3A25", fontWeight: 700, height: 22 }} /></Box>
@@ -61,8 +108,8 @@ export default function BookingsTab() {
                   <Box component="td" sx={{ px: 2.5, py: 1.8 }}><Chip size="small" label={b.bookingStatus} color={statusColor[b.bookingStatus] as any} sx={{ fontWeight: 700 }} /></Box>
                 </Box>
               ))}
-              {filtered.length === 0 && (
-                <Box component="tr"><Box component="td" colSpan={6} sx={{ px: 2.5, py: 5, textAlign: "center", color: "#6B7A5C" }}>No bookings found.</Box></Box>
+              {filteredAndSorted.length === 0 && (
+                <Box component="tr"><Box component="td" colSpan={6} sx={{ px: 2.5, py: 5, textAlign: "center", color: "#6B7A5C" }}>No bookings for this filter.</Box></Box>
               )}
             </Box>
           </Box>

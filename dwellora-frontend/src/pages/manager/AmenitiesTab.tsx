@@ -19,12 +19,37 @@ import CelebrationIcon from "@mui/icons-material/Celebration";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { amenityApi } from "../../api/amenityApi";
 import { useAuth } from "../../auth/AuthContext";
-import type { AmenityRequest, AmenityResponse, AmenityType, BookingPolicy } from "../../api/types";
+import type {
+  AmenityRequest,
+  AmenityResponse,
+  AmenityType,
+  BookingPolicy,
+} from "../../api/types";
 
-const AMENITY_TYPES: AmenityType[] = ["GYM","SWIMMING_POOL","COMMUNITY_HALL","BADMINTON_COURT","TENNIS_COURT","BASKETBALL_COURT","YOGA_STUDIO","CHILDRENS_PLAY_AREA","PARTY_HALL","LIBRARY"];
-const emptyForm = (apartmentId: number): AmenityRequest => ({
-  apartmentId, amenityName: "", amenityType: "GYM", capacity: 1, available: true,
-  openingTime: "06:00:00", closingTime: "22:00:00", bookingPolicy: "PER_PERSON", slotDurationMinutes: 60, maxBookingsPerDay: 1, maxBookingsPerMonth: null,
+const AMENITY_TYPES: AmenityType[] = [
+  "GYM",
+  "SWIMMING_POOL",
+  "COMMUNITY_HALL",
+  "BADMINTON_COURT",
+  "TENNIS_COURT",
+  "BASKETBALL_COURT",
+  "YOGA_STUDIO",
+  "CHILDRENS_PLAY_AREA",
+  "PARTY_HALL",
+  "LIBRARY",
+];
+
+const emptyForm = (): AmenityRequest => ({
+  amenityName: "",
+  amenityType: "GYM",
+  capacity: 1,
+  available: true,
+  openingTime: "06:00:00",
+  closingTime: "22:00:00",
+  bookingPolicy: "PER_PERSON",
+  slotDurationMinutes: 60,
+  maxBookingsPerDay: 1,
+  maxBookingsPerMonth: null,
 });
 
 const AMENITY_ICONS: Record<AmenityType, React.ReactNode> = {
@@ -46,31 +71,103 @@ export default function AmenitiesTab() {
   const [amenities, setAmenities] = useState<AmenityResponse[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<AmenityResponse | null>(null);
-  const [form, setForm] = useState<AmenityRequest>(emptyForm(apartmentId));
+  const [form, setForm] = useState<AmenityRequest>(emptyForm());
   const [toast, setToast] = useState("");
   const [search, setSearch] = useState("");
 
-  const load = useCallback(() => {
+  const load = useCallback(async () => {
     if (!apartmentId) return;
-    amenityApi.getByApartment(apartmentId).then(setAmenities).catch(() => setToast("Could not load amenities."));
+    try {
+      const data = await amenityApi.getAll();
+      setAmenities(data);
+    } catch {
+      setToast("Could not load amenities.");
+    }
   }, [apartmentId]);
-  useEffect(load, [load]);
 
-  const filtered = useMemo(() => amenities.filter(a => a.amenityName.toLowerCase().includes(search.toLowerCase()) || a.amenityType.toLowerCase().includes(search.toLowerCase())), [amenities, search]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const openNew = () => { setEditing(null); setForm(emptyForm(apartmentId)); setOpen(true); };
-  const openEdit = (a: AmenityResponse) => { setEditing(a); setForm({ ...a }); setOpen(true); };
-  const set = <K extends keyof AmenityRequest>(field: K, value: AmenityRequest[K]) => setForm((f) => ({ ...f, [field]: value }));
+  const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    let list = !query
+      ? [...amenities]
+      : amenities.filter(
+          (a) =>
+            a.amenityName.toLowerCase().includes(query) ||
+            a.amenityType.toLowerCase().includes(query)
+        );
+    return list.sort((a, b) => a.amenityId - b.amenityId);
+  }, [amenities, search]);
+
+  const openNew = () => {
+    setEditing(null);
+    setForm(emptyForm());
+    setOpen(true);
+  };
+
+  const openEdit = (a: AmenityResponse) => {
+    setEditing(a);
+    setForm({
+      amenityName: a.amenityName,
+      amenityType: a.amenityType,
+      capacity: a.capacity,
+      available: a.available,
+      openingTime: a.openingTime,
+      closingTime: a.closingTime,
+      bookingPolicy: a.bookingPolicy,
+      slotDurationMinutes: a.slotDurationMinutes,
+      maxBookingsPerDay: a.maxBookingsPerDay,
+      maxBookingsPerMonth: a.maxBookingsPerMonth,
+    });
+    setOpen(true);
+  };
+
+  const set = <K extends keyof AmenityRequest>(
+    field: K,
+    value: AmenityRequest[K]
+  ) => {
+    setForm((f) => ({
+      ...f,
+      [field]: value,
+    }));
+  };
 
   const handleSave = async () => {
     try {
-      if (editing) { await amenityApi.update(editing.amenityId, form); setToast("Amenity updated."); }
-      else { await amenityApi.add(form); setToast("Amenity added."); }
-      setOpen(false); load();
-    } catch (err: any) { setToast(err?.response?.data?.details || "Could not save amenity."); }
+      if (editing) {
+        await amenityApi.update(editing.amenityId, form);
+        setToast("Amenity updated.");
+      } else {
+        await amenityApi.add(form);
+        setToast("Amenity added.");
+      }
+      setOpen(false);
+      setEditing(null);
+      setForm(emptyForm());
+      await load();
+    } catch (err: any) {
+      setToast(
+        err?.response?.data?.details ||
+          err?.response?.data?.message ||
+          "Could not save amenity."
+      );
+    }
   };
+
   const handleDelete = async (id: number) => {
-    try { await amenityApi.remove(id); setToast("Amenity removed."); load(); } catch { setToast("Could not remove amenity."); }
+    try {
+      await amenityApi.remove(id);
+      setToast("Amenity removed.");
+      await load();
+    } catch (err: any) {
+      setToast(
+        err?.response?.data?.details ||
+          err?.response?.data?.message ||
+          "Could not remove amenity."
+      );
+    }
   };
 
   return (

@@ -10,13 +10,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+/**
+ * Represents an onboarding request entity for an apartment complex.
+ */
 @Entity
 @Table(name = "onboarding_requests")
 public class OnboardingRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer requestId;
+    private Long requestId;
 
     private String apartmentName;
     private String address;
@@ -37,13 +40,11 @@ public class OnboardingRequest {
 
     public OnboardingRequest() {}
 
-    // Getters and Setters
-
-    public Integer getRequestId() {
+    public Long getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(Integer requestId) {
+    public void setRequestId(Long requestId) {
         this.requestId = requestId;
     }
 

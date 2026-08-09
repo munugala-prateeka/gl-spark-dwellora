@@ -6,10 +6,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/** Repository interface for executing database operations on Complaint entities. */
 @Repository
-public interface ComplaintRepository extends JpaRepository<Complaint, Integer> {
+public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
-    List<Complaint> findByUserId(Integer userId);
+    /** Retrieves all complaints submitted by a specific user. */
+    List<Complaint> findByUserId(Long userId);
 
-    List<Complaint> findByApartmentIdOrderByRaisedAtDesc(Integer apartmentId);
+    /** Retrieves all complaints for an apartment ordered by creation time in descending order. */
+    List<Complaint> findByApartmentIdOrderByRaisedAtDesc(Long apartmentId);
 }

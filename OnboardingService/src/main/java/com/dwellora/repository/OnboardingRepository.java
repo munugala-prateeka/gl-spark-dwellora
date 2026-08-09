@@ -5,7 +5,9 @@ import com.dwellora.enums.OnboardingStatus;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OnboardingRepository extends JpaRepository<OnboardingRequest, Integer> {
-
+/**
+ * Repository interface for managing {@link OnboardingRequest} entities.
+ */
+public interface OnboardingRepository extends JpaRepository<OnboardingRequest, Long> {
     List<OnboardingRequest> findByStatus(OnboardingStatus status);
 }

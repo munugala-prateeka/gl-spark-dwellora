@@ -1,9 +1,12 @@
 package com.dwellora.dto;
 
+/**
+ * Data transfer object for user response details.
+ */
 public class UserResponseDTO {
 
-    private Integer userId;
-    private Integer apartmentId;
+    private Long userId;
+    private Long apartmentId;
     private String fullName;
     private String email;
     private String phone;
@@ -14,8 +17,8 @@ public class UserResponseDTO {
     public UserResponseDTO() {}
 
     public UserResponseDTO(
-            Integer userId,
-            Integer apartmentId,
+            Long userId,
+            Long apartmentId,
             String fullName,
             String email,
             String phone,
@@ -32,27 +35,67 @@ public class UserResponseDTO {
         this.accountStatus = accountStatus;
     }
 
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
+    public Long getUserId() {
+        return userId;
+    }
 
-    public Integer getApartmentId() { return apartmentId; }
-    public void setApartmentId(Integer apartmentId) { this.apartmentId = apartmentId; }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
+    public Long getApartmentId() {
+        return apartmentId;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setApartmentId(Long apartmentId) {
+        this.apartmentId = apartmentId;
+    }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getFullName() {
+        return fullName;
+    }
 
-    public String getFlatNumber() { return flatNumber; }
-    public void setFlatNumber(String flatNumber) { this.flatNumber = flatNumber; }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getAccountStatus() { return accountStatus; }
-    public void setAccountStatus(String accountStatus) { this.accountStatus = accountStatus; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getFlatNumber() {
+        return flatNumber;
+    }
+
+    public void setFlatNumber(String flatNumber) {
+        this.flatNumber = flatNumber;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
+    }
 }

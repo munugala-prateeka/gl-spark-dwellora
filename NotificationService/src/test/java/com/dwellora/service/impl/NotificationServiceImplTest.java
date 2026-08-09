@@ -46,8 +46,8 @@ class NotificationServiceImplTest {
     @BeforeEach
     void setUp() {
         bookingNotification = new Notification();
-        bookingNotification.setNotificationId(1);
-        bookingNotification.setUserId(100);
+        bookingNotification.setNotificationId(1L);
+        bookingNotification.setUserId(100L);
         bookingNotification.setType(NotificationType.BOOKING);
         bookingNotification.setTitle("Booking confirmed");
         bookingNotification.setMessage("Your Gym slot for tomorrow 7-8am is booked.");
@@ -59,10 +59,10 @@ class NotificationServiceImplTest {
     @DisplayName("US-018 (AC-1): Given a relevant event occurred, when I open notifications, then it appears in my list")
     void getUserNotifications_ReturnsUsersNotifications() {
         // Given
-        when(repository.findByUserIdOrderByCreatedAtDesc(100)).thenReturn(List.of(bookingNotification));
+        when(repository.findByUserIdOrderByCreatedAtDesc(100L)).thenReturn(List.of(bookingNotification));
 
         // When
-        List<NotificationResponseDTO> results = notificationService.getUserNotifications(100);
+        List<NotificationResponseDTO> results = notificationService.getUserNotifications(100L);
 
         // Then
         assertEquals(1, results.size());
@@ -74,10 +74,10 @@ class NotificationServiceImplTest {
     @DisplayName("US-018: Given no notifications exist yet, when I open notifications, then an empty list is returned")
     void getUserNotifications_NoNotifications_ReturnsEmptyList() {
         // Given
-        when(repository.findByUserIdOrderByCreatedAtDesc(200)).thenReturn(Collections.emptyList());
+        when(repository.findByUserIdOrderByCreatedAtDesc(200L)).thenReturn(Collections.emptyList());
 
         // When
-        List<NotificationResponseDTO> results = notificationService.getUserNotifications(200);
+        List<NotificationResponseDTO> results = notificationService.getUserNotifications(200L);
 
         // Then
         assertTrue(results.isEmpty());
@@ -87,11 +87,11 @@ class NotificationServiceImplTest {
     @DisplayName("US-018 (AC-2): Given an unread notification, when I open it, then it is marked as read")
     void markAsRead_ExistingNotification_MarksRead() {
         // Given
-        when(repository.findById(1)).thenReturn(Optional.of(bookingNotification));
+        when(repository.findById(1L)).thenReturn(Optional.of(bookingNotification));
         when(repository.save(bookingNotification)).thenReturn(bookingNotification);
 
         // When
-        NotificationResponseDTO response = notificationService.markAsRead(1);
+        NotificationResponseDTO response = notificationService.markAsRead(1L);
 
         // Then
         assertNotNull(response);
@@ -106,9 +106,9 @@ class NotificationServiceImplTest {
     @DisplayName("US-018: Given a non-existent notification id, when marking as read, then a NotificationNotFoundException is thrown")
     void markAsRead_MissingNotification_ThrowsException() {
         // Given
-        when(repository.findById(999)).thenReturn(Optional.empty());
+        when(repository.findById(999L)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(NotificationNotFoundException.class, () -> notificationService.markAsRead(999));
+        assertThrows(NotificationNotFoundException.class, () -> notificationService.markAsRead(999L));
     }
 }

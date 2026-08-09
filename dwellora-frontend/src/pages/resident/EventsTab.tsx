@@ -15,19 +15,19 @@ export default function EventsTab() {
 
   const load = useCallback(() => {
     if (!apartmentId || !user) return;
-    eventApi.getUpcoming(apartmentId).then(setEvents).catch(() => setToast("Could not load events."));
-    eventApi.getMyRsvps(user.userId).then((ids) => setRsvped(new Set(ids))).catch(() => {});
+    eventApi.getUpcoming().then(setEvents).catch(() => setToast("Could not load events."));
+    eventApi.getMyRsvps().then((ids) => setRsvped(new Set(ids))).catch(() => {});
   }, [apartmentId, user]);
   useEffect(load, [load]);
 
   const handleRsvp = async (eventId: number) => {
     if (!user) return;
-    try { await eventApi.rsvp(eventId, user.userId); setRsvped((prev) => new Set(prev).add(eventId)); setToast("You're on the list!"); load(); }
+    try { await eventApi.rsvp(eventId); setRsvped((prev) => new Set(prev).add(eventId)); setToast("You're on the list!"); load(); }
     catch (err: any) { setToast(err?.response?.data?.details || "Could not RSVP — this event may be full."); }
   };
   const handleWithdraw = async (eventId: number) => {
     if (!user) return;
-    try { await eventApi.withdrawRsvp(eventId, user.userId); setRsvped((prev) => { const n = new Set(prev); n.delete(eventId); return n; }); setToast("RSVP withdrawn."); load(); }
+    try { await eventApi.withdrawRsvp(eventId); setRsvped((prev) => { const n = new Set(prev); n.delete(eventId); return n; }); setToast("RSVP withdrawn."); load(); }
     catch { setToast("Could not withdraw your RSVP."); }
   };
 

@@ -6,7 +6,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import { eventApi } from "../../api/communityApi";
 import { useAuth } from "../../auth/AuthContext";
 import type { EventRequest, EventResponse } from "../../api/types";
-const emptyForm = (apartmentId: number): EventRequest => ({ apartmentId, title: "", description: "", eventDate: "", capacity: null });
+const emptyForm = (apartmentId: number): EventRequest => ({title: "", description: "", eventDate: "", capacity: null });
 
 export default function EventsTab() {
   const { user } = useAuth();
@@ -15,7 +15,7 @@ export default function EventsTab() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<EventRequest>(emptyForm(apartmentId));
   const [toast, setToast] = useState("");
-  const load = useCallback(() => { if (!apartmentId) return; eventApi.getUpcoming(apartmentId).then(setEvents).catch(() => setToast("Could not load events.")); }, [apartmentId]);
+  const load = useCallback(() => { if (!apartmentId) return; eventApi.getUpcoming().then(setEvents).catch(() => setToast("Could not load events.")); }, [apartmentId]);
   useEffect(load, [load]);
   const handleCreate = async () => {
     try { await eventApi.create(form); setToast("Event created."); setOpen(false); setForm(emptyForm(apartmentId)); load(); }

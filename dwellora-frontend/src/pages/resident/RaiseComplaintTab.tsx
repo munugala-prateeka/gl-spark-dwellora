@@ -6,7 +6,7 @@ import { useAuth } from "../../auth/AuthContext";
 import type { ComplaintRequest, ComplaintResponse } from "../../api/types";
 import { statusColor } from "../../theme/theme";
 
-const emptyForm = (apartmentId: number): ComplaintRequest => ({ apartmentId, category: "", description: "" });
+const emptyForm = (apartmentId: number): ComplaintRequest => ({category: "", description: "" });
 
 export default function RaiseComplaintTab() {
   const { user } = useAuth();
@@ -19,7 +19,7 @@ export default function RaiseComplaintTab() {
 
   const load = useCallback(() => {
     if (!user) return;
-    complaintApi.getByUser(user.userId).then(setComplaints).catch(() => setToast("Could not load your complaints."));
+    complaintApi.getByUser().then(setComplaints).catch(() => setToast("Could not load your complaints."));
   }, [user]);
   useEffect(load, [load]);
 
@@ -28,7 +28,7 @@ export default function RaiseComplaintTab() {
   const handleSubmit = async () => {
     if (!user) return;
     try {
-      await complaintApi.raise(user.userId, form);
+      await complaintApi.raise(form);
       setToast("Complaint raised — your manager has been notified.");
       setOpen(false);
       setForm(emptyForm(apartmentId));

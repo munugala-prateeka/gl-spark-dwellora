@@ -9,6 +9,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service implementation for managing user notification retrieval and status updates.
+ */
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
@@ -18,21 +21,24 @@ public class NotificationServiceImpl implements NotificationService {
         this.repository = repository;
     }
 
+    /**
+     * Retrieves all notifications for a given user ordered by creation timestamp descending.
+     */
     @Override
-    public List<NotificationResponseDTO> getUserNotifications(Integer userId) {
+    public List<NotificationResponseDTO> getUserNotifications(Long userId) {
         List<Notification> notifications = repository.findByUserIdOrderByCreatedAtDesc(userId);
         return notifications.stream().map(this::mapToResponseDTO).toList();
     }
 
+    /**
+     * Marks a specific notification as read.
+     */
     @Override
     @Transactional
-    public NotificationResponseDTO markAsRead(Integer notificationId) {
+    public NotificationResponseDTO markAsRead(Long notificationId) {
         Notification notification =
-                repository
-                        .findById(notificationId)
-                        .orElseThrow(
-                                () ->
-                                        new NotificationNotFoundException(
+                repository.findById(notificationId).orElseThrow(
+                                () -> new NotificationNotFoundException(
                                                 "Notification not found with ID: " + notificationId));
 
         notification.setRead(true);
@@ -41,6 +47,9 @@ public class NotificationServiceImpl implements NotificationService {
         return mapToResponseDTO(saved);
     }
 
+    /**
+     * Maps a {@link Notification} entity to its response DTO representation.
+     */
     private NotificationResponseDTO mapToResponseDTO(Notification notification) {
         return new NotificationResponseDTO(
                 notification.getNotificationId(),

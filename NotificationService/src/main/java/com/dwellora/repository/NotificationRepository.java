@@ -4,7 +4,13 @@ import com.dwellora.entity.Notification;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NotificationRepository extends JpaRepository<Notification, Integer> {
+/**
+ * Repository interface for managing {@link Notification} persistence operations.
+ */
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    List<Notification> findByUserIdOrderByCreatedAtDesc(Integer userId);
+    /**
+     * Retrieves all notifications for a given user ordered by creation date in descending order.
+     */
+    List<Notification> findByUserIdOrderByCreatedAtDesc(Long userId);
 }

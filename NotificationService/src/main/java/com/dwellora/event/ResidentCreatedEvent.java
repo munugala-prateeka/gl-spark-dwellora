@@ -1,28 +1,31 @@
 package com.dwellora.event;
 
+/**
+ * Event published when a resident is created.
+ */
 public class ResidentCreatedEvent {
 
-    private Integer userId;
-    private Integer apartmentId;
+    private Long userId;
+    private Long apartmentId;
     private String residentName;
     private String residentEmail;
     private String activationToken;
 
     public ResidentCreatedEvent() {}
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 

@@ -12,12 +12,19 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+/**
+ * Configuration class for setting up Kafka consumer components handling resident creation events.
+ */
 @Configuration
 public class KafkaResidentConsumerConfig {
 
+    /**
+     * Creates a {@link ConsumerFactory} configured for deserializing {@link ResidentCreatedEvent} payloads.
+     */
     @Bean
     public ConsumerFactory<String, ResidentCreatedEvent> residentConsumerFactory() {
-        JsonDeserializer<ResidentCreatedEvent> deserializer = new JsonDeserializer<>(ResidentCreatedEvent.class);
+        JsonDeserializer<ResidentCreatedEvent> deserializer =
+                new JsonDeserializer<>(ResidentCreatedEvent.class);
         deserializer.addTrustedPackages("*");
         deserializer.setUseTypeHeaders(false);
 
@@ -29,8 +36,12 @@ public class KafkaResidentConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
+    /**
+     * Creates a {@link ConcurrentKafkaListenerContainerFactory} for resident creation event listeners.
+     */
     @Bean(name = "residentKafkaListenerContainerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, ResidentCreatedEvent> residentKafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, ResidentCreatedEvent>
+    residentKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, ResidentCreatedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(residentConsumerFactory());

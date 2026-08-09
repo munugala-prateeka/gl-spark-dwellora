@@ -1,6 +1,5 @@
 package com.dwellora.service.impl;
 
-import com.dwellora.client.ApartmentClient;
 import com.dwellora.dto.AmenityRequestDTO;
 import com.dwellora.dto.AmenityResponseDTO;
 import com.dwellora.entity.Amenity;
@@ -10,67 +9,71 @@ import com.dwellora.service.AmenityService;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+/** Implementation of AmenityService handling business logic and persistence. */
 @Service
 public class AmenityServiceImpl implements AmenityService {
 
     private final AmenityRepository amenityRepository;
-    private final ApartmentClient apartmentClient;
 
-    public AmenityServiceImpl(
-            AmenityRepository amenityRepository, ApartmentClient apartmentClient) {
+    public AmenityServiceImpl(AmenityRepository amenityRepository) {
         this.amenityRepository = amenityRepository;
-        this.apartmentClient = apartmentClient;
     }
 
+    /** Creates a new amenity after validating uniqueness and operating hours. */
     @Override
-    public AmenityResponseDTO addAmenity(AmenityRequestDTO request) {
-        validateApartment(request.getApartmentId());
-
+    public AmenityResponseDTO addAmenity(Long apartmentId, AmenityRequestDTO request) {
         if (amenityRepository.existsByApartmentIdAndAmenityName(
-                request.getApartmentId(), request.getAmenityName())) {
+                apartmentId, request.getAmenityName())) {
             throw new AmenityException(
                     "Amenity already exists with name: " + request.getAmenityName());
         }
 
         validateTimes(request);
 
-        Amenity amenity = mapToEntity(request);
+        Amenity amenity = mapToEntity(apartmentId, request);
         Amenity saved = amenityRepository.save(amenity);
 
         return mapToResponse(saved);
     }
 
+    /** Retrieves all amenities across all apartments. */
     @Override
     public List<AmenityResponseDTO> getAllAmenities() {
         return amenityRepository.findAll().stream().map(this::mapToResponse).toList();
     }
 
+    /** Retrieves an amenity by ID after verifying apartment ownership. */
     @Override
-    public AmenityResponseDTO getAmenityById(Integer amenityId) {
+    public AmenityResponseDTO getAmenityById(Long amenityId, Long apartmentId) {
         Amenity amenity =
                 amenityRepository
                         .findById(amenityId)
                         .orElseThrow(
                                 () -> new AmenityException("Amenity not found with id: " + amenityId));
+
+        validateOwnership(amenity, apartmentId);
+
         return mapToResponse(amenity);
     }
 
+    /** Updates an existing amenity after validating ownership and opening/closing times. */
     @Override
-    public AmenityResponseDTO updateAmenity(Integer amenityId, AmenityRequestDTO request) {
+    public AmenityResponseDTO updateAmenity(
+            Long apartmentId, Long amenityId, AmenityRequestDTO request) {
         Amenity existing =
                 amenityRepository
                         .findById(amenityId)
                         .orElseThrow(
                                 () -> new AmenityException("Amenity not found with id: " + amenityId));
 
-        validateApartment(request.getApartmentId());
+        validateOwnership(existing, apartmentId);
         validateTimes(request);
 
-        existing.setApartmentId(request.getApartmentId());
         existing.setAmenityName(request.getAmenityName());
         existing.setAmenityType(request.getAmenityType());
         existing.setCapacity(request.getCapacity());
-        existing.setAvailable(request.getAvailable());
+        existing.setAvailable(
+                request.getAvailable() != null ? request.getAvailable() : true);
         existing.setOpeningTime(request.getOpeningTime());
         existing.setClosingTime(request.getClosingTime());
         existing.setBookingPolicy(request.getBookingPolicy());
@@ -79,32 +82,35 @@ public class AmenityServiceImpl implements AmenityService {
         existing.setMaxBookingsPerMonth(request.getMaxBookingsPerMonth());
 
         Amenity updated = amenityRepository.save(existing);
+
         return mapToResponse(updated);
     }
 
+    /** Deletes an amenity after validating apartment ownership. */
     @Override
-    public void deleteAmenity(Integer amenityId) {
-        if (!amenityRepository.existsById(amenityId)) {
-            throw new AmenityException("Amenity not found with id: " + amenityId);
-        }
-        amenityRepository.deleteById(amenityId);
+    public void deleteAmenity(Long amenityId, Long apartmentId) {
+        Amenity existing =
+                amenityRepository
+                        .findById(amenityId)
+                        .orElseThrow(
+                                () -> new AmenityException("Amenity not found with id: " + amenityId));
+
+        validateOwnership(existing, apartmentId);
+
+        amenityRepository.delete(existing);
     }
 
+    /** Retrieves all amenities belonging to a given apartment ID. */
     @Override
-    public List<AmenityResponseDTO> getAmenitiesByApartment(Integer apartmentId) {
+    public List<AmenityResponseDTO> getAmenitiesByApartment(Long apartmentId) {
         return amenityRepository.findByApartmentId(apartmentId).stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
-    private void validateApartment(Integer apartmentId) {
-        try {
-            Object apartment = apartmentClient.getApartmentById(apartmentId);
-            if (apartment == null) {
-                throw new AmenityException("Apartment not found with id: " + apartmentId);
-            }
-        } catch (Exception ex) {
-            throw new AmenityException("Apartment not found or Apartment Service is unreachable");
+    private void validateOwnership(Amenity amenity, Long apartmentId) {
+        if (!amenity.getApartmentId().equals(apartmentId)) {
+            throw new AmenityException("Amenity does not belong to your apartment.");
         }
     }
 
@@ -117,9 +123,9 @@ public class AmenityServiceImpl implements AmenityService {
         }
     }
 
-    private Amenity mapToEntity(AmenityRequestDTO dto) {
+    private Amenity mapToEntity(Long apartmentId, AmenityRequestDTO dto) {
         Amenity amenity = new Amenity();
-        amenity.setApartmentId(dto.getApartmentId());
+        amenity.setApartmentId(apartmentId);
         amenity.setAmenityName(dto.getAmenityName());
         amenity.setAmenityType(dto.getAmenityType());
         amenity.setCapacity(dto.getCapacity());

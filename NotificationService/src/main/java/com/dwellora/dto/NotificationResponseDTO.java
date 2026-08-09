@@ -3,10 +3,13 @@ package com.dwellora.dto;
 import com.dwellora.enums.NotificationType;
 import java.time.LocalDateTime;
 
+/**
+ * Data transfer object for notification responses.
+ */
 public class NotificationResponseDTO {
 
-    private Integer notificationId;
-    private Integer userId;
+    private Long notificationId;
+    private Long userId;
     private NotificationType type;
     private String title;
     private String message;
@@ -16,8 +19,8 @@ public class NotificationResponseDTO {
     public NotificationResponseDTO() {}
 
     public NotificationResponseDTO(
-            Integer notificationId,
-            Integer userId,
+            Long notificationId,
+            Long userId,
             NotificationType type,
             String title,
             String message,
@@ -32,19 +35,19 @@ public class NotificationResponseDTO {
         this.createdAt = createdAt;
     }
 
-    public Integer getNotificationId() {
+    public Long getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(Integer notificationId) {
+    public void setNotificationId(Long notificationId) {
         this.notificationId = notificationId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

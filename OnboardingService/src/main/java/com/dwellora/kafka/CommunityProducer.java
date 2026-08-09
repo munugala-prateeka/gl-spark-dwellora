@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service component responsible for publishing community approval events to Kafka.
+ */
 @Service
 public class CommunityProducer {
 
@@ -18,6 +21,9 @@ public class CommunityProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
+    /**
+     * Publishes a {@link CommunityApprovedEvent} to the Kafka topic.
+     */
     public void publish(CommunityApprovedEvent event) {
         kafkaTemplate.send(TOPIC, event);
         logger.info("Community Event Published");

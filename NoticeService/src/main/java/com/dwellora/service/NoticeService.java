@@ -2,16 +2,20 @@ package com.dwellora.service;
 
 import com.dwellora.dto.NoticeRequestDTO;
 import com.dwellora.dto.NoticeResponseDTO;
-
 import java.util.List;
 
+/** Service interface defining operations for notice management. */
 public interface NoticeService {
 
-    NoticeResponseDTO publishNotice(NoticeRequestDTO request);
+    /** Publishes a new notice for an apartment. */
+    NoticeResponseDTO publishNotice(Long apartmentId, NoticeRequestDTO request);
 
-    List<NoticeResponseDTO> getActiveNotices(Integer apartmentId);
+    /** Retrieves all currently active notices for an apartment. */
+    List<NoticeResponseDTO> getActiveNotices(Long apartmentId);
 
-    NoticeResponseDTO getNoticeById(Integer noticeId);
+    /** Retrieves details of a specific notice by ID for an apartment. */
+    NoticeResponseDTO getNoticeById(Long noticeId, Long apartmentId);
 
-    void deleteNotice(Integer noticeId);
+    /** Deletes a specific notice by ID for an apartment. */
+    void deleteNotice(Long noticeId, Long apartmentId);
 }

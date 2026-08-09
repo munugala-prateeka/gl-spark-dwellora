@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link OnboardingService} for handling onboarding requests.
+ */
 @Service
 public class OnboardingServiceImpl implements OnboardingService {
 
@@ -24,6 +27,14 @@ public class OnboardingServiceImpl implements OnboardingService {
         this.producer = producer;
     }
 
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase();
+    }
+
+
+    /**
+     * Creates a new onboarding request.
+     */
     @Override
     public OnboardingResponseDTO createRequest(OnboardingRequestDTO dto) {
         OnboardingRequest request = mapToEntity(dto);
@@ -33,6 +44,9 @@ public class OnboardingServiceImpl implements OnboardingService {
         return mapToResponse(saved);
     }
 
+    /**
+     * Retrieves all pending onboarding requests.
+     */
     @Override
     public List<OnboardingResponseDTO> getPendingRequests() {
         return repository.findByStatus(OnboardingStatus.PENDING).stream()
@@ -40,8 +54,11 @@ public class OnboardingServiceImpl implements OnboardingService {
                 .toList();
     }
 
+    /**
+     * Approves an onboarding request by its ID and triggers a community approved event.
+     */
     @Override
-    public OnboardingResponseDTO approveRequest(Integer requestId) {
+    public OnboardingResponseDTO approveRequest(Long requestId) {
         OnboardingRequest request =
                 repository
                         .findById(requestId)
@@ -71,8 +88,11 @@ public class OnboardingServiceImpl implements OnboardingService {
         return mapToResponse(request);
     }
 
+    /**
+     * Rejects an onboarding request by its ID.
+     */
     @Override
-    public OnboardingResponseDTO rejectRequest(Integer requestId) {
+    public OnboardingResponseDTO rejectRequest(Long requestId) {
         OnboardingRequest request =
                 repository
                         .findById(requestId)
@@ -87,12 +107,12 @@ public class OnboardingServiceImpl implements OnboardingService {
         return mapToResponse(saved);
     }
 
+    /**
+     * Retrieves all onboarding requests.
+     */
     @Override
     public List<OnboardingResponseDTO> getAllRequests() {
-        return repository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        return repository.findAll().stream().map(this::mapToResponse).toList();
     }
 
     private OnboardingResponseDTO mapToResponse(OnboardingRequest request) {
@@ -124,7 +144,7 @@ public class OnboardingServiceImpl implements OnboardingService {
         request.setTotalBlocks(dto.getTotalBlocks());
         request.setTotalUnits(dto.getTotalUnits());
         request.setManagerName(dto.getManagerName());
-        request.setManagerEmail(dto.getManagerEmail());
+        request.setManagerEmail(normalizeEmail(dto.getManagerEmail()));
         request.setManagerPhone(dto.getManagerPhone());
         return request;
     }

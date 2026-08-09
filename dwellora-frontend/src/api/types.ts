@@ -1,8 +1,16 @@
-// ---------- Shared ----------
-export type Role = "PLATFORM_ADMIN" | "MANAGER" | "RESIDENT";
-export type AccountStatus = "PENDING_ACTIVATION" | "ACTIVE" | "INACTIVE" | "SUSPENDED";
+export type Role =
+  | "PLATFORM_ADMIN"
+  | "MANAGER"
+  | "RESIDENT";
+
+export type AccountStatus =
+  | "PENDING_ACTIVATION"
+  | "ACTIVE"
+  | "INACTIVE"
+  | "SUSPENDED";
 
 // ---------- Auth / User ----------
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -22,6 +30,7 @@ export interface ActivateAccountRequest {
   newPassword: string;
 }
 
+// What backend returns
 export interface UserResponse {
   userId: number;
   apartmentId: number | null;
@@ -33,8 +42,10 @@ export interface UserResponse {
   accountStatus: AccountStatus;
 }
 
+// Frontend sends this when manager creates resident.
+// apartmentId is intentionally NOT included.
+// Gateway gets apartmentId from JWT.
 export interface ResidentRequest {
-  apartmentId: number;
   fullName: string;
   email: string;
   phone: string;
@@ -42,7 +53,6 @@ export interface ResidentRequest {
 }
 
 export interface UserUpdateRequest {
-  apartmentId: number;
   fullName: string;
   email: string;
   password?: string;
@@ -51,7 +61,11 @@ export interface UserUpdateRequest {
 }
 
 // ---------- Onboarding ----------
-export type OnboardingStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export type OnboardingStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED";
 
 export interface OnboardingRequest {
   apartmentName: string;
@@ -74,7 +88,11 @@ export interface OnboardingResponse extends OnboardingRequest {
 }
 
 // ---------- Apartment ----------
-export type ApartmentStatus = "PENDING_ACTIVATION" | "ACTIVE" | "SUSPENDED";
+
+export type ApartmentStatus =
+  | "PENDING_ACTIVATION"
+  | "ACTIVE"
+  | "SUSPENDED";
 
 export interface ApartmentResponse {
   apartmentId: number;
@@ -89,6 +107,7 @@ export interface ApartmentResponse {
 }
 
 // ---------- Amenity ----------
+
 export type AmenityType =
   | "GYM"
   | "SWIMMING_POOL"
@@ -101,15 +120,16 @@ export type AmenityType =
   | "PARTY_HALL"
   | "LIBRARY";
 
-export type BookingPolicy = "PER_PERSON" | "PER_FLAT";
+export type BookingPolicy =
+  | "PER_PERSON"
+  | "PER_FLAT";
 
 export interface AmenityRequest {
-  apartmentId: number;
   amenityName: string;
   amenityType: AmenityType;
   capacity: number;
   available: boolean;
-  openingTime: string; // "HH:mm:ss"
+  openingTime: string;
   closingTime: string;
   bookingPolicy: BookingPolicy;
   slotDurationMinutes: number;
@@ -117,42 +137,69 @@ export interface AmenityRequest {
   maxBookingsPerMonth?: number | null;
 }
 
-export interface AmenityResponse extends AmenityRequest {
+export interface AmenityResponse {
   amenityId: number;
+  apartmentId: number;
+  amenityName: string;
+  amenityType: AmenityType;
+  capacity: number;
+  available: boolean;
+  openingTime: string;
+  closingTime: string;
+  bookingPolicy: BookingPolicy;
+  slotDurationMinutes: number;
+  maxBookingsPerDay: number;
+  maxBookingsPerMonth?: number | null;
 }
 
 // ---------- Booking ----------
-export type BookingStatus = "BOOKED" | "CANCELLED";
+
+export type BookingStatus =
+  | "BOOKED"
+  | "CANCELLED";
+
+
+// ---------- Create / Update Booking ----------
 
 export interface BookingRequest {
-  userId: number;
   amenityId: number;
-  bookingDate: string; // "yyyy-MM-dd"
-  startTime: string; // "HH:mm:ss"
+  bookingDate: string;
+  startTime: string;
   endTime: string;
 }
+
+
+// ---------- Booking Response ----------
 
 export interface BookingResponse {
   bookingId: number;
   userId: number;
   amenityId: number;
   amenityName: string;
+  apartmentId: number;
   bookingDate: string;
   startTime: string;
   endTime: string;
   bookingStatus: BookingStatus;
 }
 
+
+// ---------- Admin Booking Response ----------
+
 export interface AdminBookingResponse {
   bookingId: number;
   residentName: string;
   flatNumber: string;
   amenityName: string;
+  apartmentId: number;
   bookingDate: string;
   startTime: string;
   endTime: string;
   bookingStatus: BookingStatus;
 }
+
+
+// ---------- Availability ----------
 
 export interface AvailabilitySlot {
   slot: string;
@@ -162,11 +209,33 @@ export interface AvailabilitySlot {
   bookingPolicy: string;
 }
 
+
+// ---------- API Request Parameters ----------
+
+export interface BookingAvailabilityParams {
+  amenityId: number;
+  bookingDate: string;
+}
+
+
+// ---------- Booking API Headers ----------
+
+export interface BookingAuthHeaders {
+  Authorization: string;
+  "X-User-Id": string;
+  "X-User-Role": "RESIDENT" | "MANAGER";
+}
+
+
+
 // ---------- Complaints ----------
-export type ComplaintStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED";
+
+export type ComplaintStatus =
+  | "OPEN"
+  | "IN_PROGRESS"
+  | "RESOLVED";
 
 export interface ComplaintRequest {
-  apartmentId: number;
   category: string;
   description: string;
 }
@@ -190,8 +259,8 @@ export interface ComplaintResponse {
 }
 
 // ---------- Notices ----------
+
 export interface NoticeRequest {
-  apartmentId: number;
   title: string;
   body: string;
   isUrgent: boolean;
@@ -209,11 +278,11 @@ export interface NoticeResponse {
 }
 
 // ---------- Events ----------
+
 export interface EventRequest {
-  apartmentId: number;
   title: string;
   description: string;
-  eventDate: string; // ISO datetime
+  eventDate: string;
   capacity?: number | null;
 }
 
@@ -229,7 +298,13 @@ export interface EventResponse {
 }
 
 // ---------- Notifications ----------
-export type NotificationType = "BOOKING" | "COMPLAINT" | "NOTICE" | "ONBOARDING" | "EVENT";
+
+export type NotificationType =
+  | "BOOKING"
+  | "COMPLAINT"
+  | "NOTICE"
+  | "ONBOARDING"
+  | "EVENT";
 
 export interface NotificationResponse {
   notificationId: number;

@@ -3,9 +3,12 @@ package com.dwellora.dto;
 import com.dwellora.enums.OnboardingStatus;
 import java.time.LocalDateTime;
 
+/**
+ * Data transfer object for onboarding request responses.
+ */
 public class OnboardingResponseDTO {
 
-    private Integer requestId;
+    private Long requestId;
     private String apartmentName;
     private String address;
     private String city;
@@ -22,13 +25,11 @@ public class OnboardingResponseDTO {
 
     public OnboardingResponseDTO() {}
 
-    // Getters and Setters
-
-    public Integer getRequestId() {
+    public Long getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(Integer requestId) {
+    public void setRequestId(Long requestId) {
         this.requestId = requestId;
     }
 

@@ -5,10 +5,15 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "USER-SERVICE")
+/**
+ * Feign client for communicating with the USER-SERVICE microservice.
+ */
+@FeignClient(name = "USER-SERVICE", fallback = UserClientFallback.class)
 public interface UserClient {
 
+    /**
+     * Retrieves user details by their unique identifier.
+     */
     @GetMapping("/users/{id}")
-    UserDTO getUserById(@PathVariable Integer id);
-
+    UserDTO getUserById(@PathVariable Long id);
 }

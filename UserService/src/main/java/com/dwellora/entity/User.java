@@ -10,9 +10,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a user in the system.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -20,10 +22,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "apartment_id")
-    private Integer apartmentId;
+    private Long apartmentId;
 
     @Column(name = "full_name")
     private String fullName;
@@ -50,8 +52,8 @@ public class User {
     public User() {}
 
     public User(
-            Integer userId,
-            Integer apartmentId,
+            Long userId,
+            Long apartmentId,
             String fullName,
             String email,
             String password,
@@ -70,19 +72,19 @@ public class User {
         this.accountStatus = accountStatus;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 
@@ -157,5 +159,4 @@ public class User {
     public void setActivationTokenExpiry(LocalDateTime activationTokenExpiry) {
         this.activationTokenExpiry = activationTokenExpiry;
     }
-
 }

@@ -13,7 +13,7 @@ export default function NoticesTab() {
 
   useEffect(() => {
     if (!apartmentId) return;
-    noticeApi.getActive(apartmentId).then(setNotices).catch(() => setToast("Could not load notices."));
+    noticeApi.getActive().then(setNotices).catch(() => setToast("Could not load notices."));
   }, [apartmentId]);
 
   return (

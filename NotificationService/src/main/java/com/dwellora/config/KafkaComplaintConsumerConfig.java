@@ -12,9 +12,15 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+/**
+ * Configuration class for setting up Kafka consumer components handling complaint update events.
+ */
 @Configuration
 public class KafkaComplaintConsumerConfig {
 
+    /**
+     * Creates a {@link ConsumerFactory} configured for deserializing {@link ComplaintUpdatedEvent} payloads.
+     */
     @Bean
     public ConsumerFactory<String, ComplaintUpdatedEvent> complaintConsumerFactory() {
         JsonDeserializer<ComplaintUpdatedEvent> deserializer =
@@ -30,6 +36,9 @@ public class KafkaComplaintConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
+    /**
+     * Creates a {@link ConcurrentKafkaListenerContainerFactory} for complaint update event listeners.
+     */
     @Bean(name = "complaintKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, ComplaintUpdatedEvent>
     complaintKafkaListenerContainerFactory() {

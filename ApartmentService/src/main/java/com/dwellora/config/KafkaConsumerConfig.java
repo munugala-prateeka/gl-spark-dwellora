@@ -12,9 +12,15 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+/**
+ * Kafka consumer configuration for receiving community approved events.
+ */
 @Configuration
 public class KafkaConsumerConfig {
 
+    /**
+     * Configures and creates the Kafka consumer factory instance.
+     */
     @Bean
     public ConsumerFactory<String, CommunityApprovedEvent> consumerFactory() {
         JsonDeserializer<CommunityApprovedEvent> deserializer =
@@ -30,6 +36,9 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
+    /**
+     * Configures and creates the Kafka listener container factory instance.
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, CommunityApprovedEvent>
     kafkaListenerContainerFactory() {

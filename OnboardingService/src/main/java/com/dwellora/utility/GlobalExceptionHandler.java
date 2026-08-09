@@ -9,9 +9,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Global exception handler for handling application-wide exceptions.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handles validation exceptions thrown when method argument validation fails.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorInfo> handleValidationException(
             MethodArgumentNotValidException ex) {
@@ -24,12 +30,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles custom onboarding exceptions.
+     */
     @ExceptionHandler(OnboardingException.class)
     public ResponseEntity<ErrorInfo> handleOnboardingException(OnboardingException ex) {
         ErrorInfo errorInfo = new ErrorInfo("Onboarding Error", ex.getMessage());
         return new ResponseEntity<>(errorInfo, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Handles general unhandled exceptions.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorInfo> handleGeneralException(Exception ex) {
         ErrorInfo errorInfo = new ErrorInfo("Internal Server Error", ex.getMessage());

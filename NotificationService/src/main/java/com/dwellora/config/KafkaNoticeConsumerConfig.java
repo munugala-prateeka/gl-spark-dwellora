@@ -1,6 +1,8 @@
 package com.dwellora.config;
 
 import com.dwellora.event.NoticePublishedEvent;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -10,12 +12,15 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * Configuration class for setting up Kafka consumer components handling notice publication events.
+ */
 @Configuration
 public class KafkaNoticeConsumerConfig {
 
+    /**
+     * Creates a {@link ConsumerFactory} configured for deserializing {@link NoticePublishedEvent} payloads.
+     */
     @Bean
     public ConsumerFactory<String, NoticePublishedEvent> noticeConsumerFactory() {
         JsonDeserializer<NoticePublishedEvent> deserializer =
@@ -31,6 +36,9 @@ public class KafkaNoticeConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
+    /**
+     * Creates a {@link ConcurrentKafkaListenerContainerFactory} for notice publication event listeners.
+     */
     @Bean(name = "noticeKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, NoticePublishedEvent>
     noticeKafkaListenerContainerFactory() {
