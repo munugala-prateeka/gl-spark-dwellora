@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * Service component responsible for consuming community approval events from Kafka and creating apartments.
+ */
 @Service
 public class CommunityConsumer {
 
@@ -24,10 +26,12 @@ public class CommunityConsumer {
         this.producer = producer;
     }
 
+    /**
+     * Listens to the community-approved Kafka topic to process approved events, persist new apartments, and publish creation events.
+     */
     @KafkaListener(topics = "community-approved", groupId = "apartment-group")
     public void consume(CommunityApprovedEvent event) {
         logger.info("========== RECEIVED ==========");
-        System.out.println(event);
 
         Apartment apartment = new Apartment();
         apartment.setApartmentName(event.getApartmentName());

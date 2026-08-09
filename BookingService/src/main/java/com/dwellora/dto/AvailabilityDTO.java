@@ -1,5 +1,8 @@
 package com.dwellora.dto;
 
+/**
+ * Data transfer object representing the capacity and available slots for a specific amenity time window.
+ */
 public class AvailabilityDTO {
 
     private String slot;
@@ -8,14 +11,14 @@ public class AvailabilityDTO {
     private Long remaining;
     private String bookingPolicy;
 
-    public AvailabilityDTO() {
-    }
+    public AvailabilityDTO() {}
 
-    public AvailabilityDTO(String slot,
-                           Integer capacity,
-                           Long booked,
-                           Long remaining,
-                           String bookingPolicy) {
+    public AvailabilityDTO(
+            String slot,
+            Integer capacity,
+            Long booked,
+            Long remaining,
+            String bookingPolicy) {
 
         this.slot = slot;
         this.capacity = capacity;

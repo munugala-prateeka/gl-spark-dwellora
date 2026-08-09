@@ -1,5 +1,6 @@
 package com.dwellora.enums;
 
+/** Enum representing supported categories of amenities. */
 public enum AmenityType {
     GYM,
     SWIMMING_POOL,

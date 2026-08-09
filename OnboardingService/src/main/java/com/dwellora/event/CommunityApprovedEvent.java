@@ -1,8 +1,11 @@
 package com.dwellora.event;
 
+/**
+ * Event published when a community onboarding request is approved.
+ */
 public class CommunityApprovedEvent {
 
-    private Integer requestId;
+    private Long requestId;
     private String apartmentName;
     private String address;
     private String city;
@@ -16,13 +19,11 @@ public class CommunityApprovedEvent {
 
     public CommunityApprovedEvent() {}
 
-    // Getters and Setters
-
-    public Integer getRequestId() {
+    public Long getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(Integer requestId) {
+    public void setRequestId(Long requestId) {
         this.requestId = requestId;
     }
 

@@ -4,10 +4,11 @@ import com.dwellora.enums.AmenityType;
 import com.dwellora.enums.BookingPolicy;
 import java.time.LocalTime;
 
+/** Data transfer object representing amenity response details. */
 public class AmenityResponseDTO {
 
-    private Integer amenityId;
-    private Integer apartmentId;
+    private Long amenityId;
+    private Long apartmentId;
     private String amenityName;
     private AmenityType amenityType;
     private Integer capacity;
@@ -22,8 +23,8 @@ public class AmenityResponseDTO {
     public AmenityResponseDTO() {}
 
     public AmenityResponseDTO(
-            Integer amenityId,
-            Integer apartmentId,
+            Long amenityId,
+            Long apartmentId,
             String amenityName,
             AmenityType amenityType,
             Integer capacity,
@@ -48,19 +49,19 @@ public class AmenityResponseDTO {
         this.maxBookingsPerMonth = maxBookingsPerMonth;
     }
 
-    public Integer getAmenityId() {
+    public Long getAmenityId() {
         return amenityId;
     }
 
-    public void setAmenityId(Integer amenityId) {
+    public void setAmenityId(Long amenityId) {
         this.amenityId = amenityId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 
@@ -136,6 +137,11 @@ public class AmenityResponseDTO {
         this.maxBookingsPerDay = maxBookingsPerDay;
     }
 
-    public Integer getMaxBookingsPerMonth() { return maxBookingsPerMonth; }
-    public void setMaxBookingsPerMonth(Integer maxBookingsPerMonth) { this.maxBookingsPerMonth = maxBookingsPerMonth; }
+    public Integer getMaxBookingsPerMonth() {
+        return maxBookingsPerMonth;
+    }
+
+    public void setMaxBookingsPerMonth(Integer maxBookingsPerMonth) {
+        this.maxBookingsPerMonth = maxBookingsPerMonth;
+    }
 }

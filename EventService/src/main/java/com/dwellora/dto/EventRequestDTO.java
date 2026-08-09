@@ -6,10 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+/** Data transfer object for creating or updating an event. */
 public class EventRequestDTO {
-
-    @NotNull(message = "Apartment ID is required")
-    private Integer apartmentId;
 
     @NotBlank(message = "Title is required")
     private String title;
@@ -23,18 +21,37 @@ public class EventRequestDTO {
     @Min(value = 1, message = "Capacity must be at least 1")
     private Integer capacity;
 
-    public Integer getApartmentId() { return apartmentId; }
-    public void setApartmentId(Integer apartmentId) { this.apartmentId = apartmentId; }
+    public EventRequestDTO() {}
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public LocalDateTime getEventDate() { return eventDate; }
-    public void setEventDate(LocalDateTime eventDate) { this.eventDate = eventDate; }
+    public String getDescription() {
+        return description;
+    }
 
-    public Integer getCapacity() { return capacity; }
-    public void setCapacity(Integer capacity) { this.capacity = capacity; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDateTime eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
 }

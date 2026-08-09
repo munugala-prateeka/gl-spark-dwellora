@@ -1,6 +1,8 @@
 package com.dwellora.config;
 
 import com.dwellora.event.BookingCreatedEvent;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,27 +13,31 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * Configuration class for setting up Kafka producer components handling booking events.
+ */
 @Configuration
 public class KafkaProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapServers;
 
+    /**
+     * Creates a {@link ProducerFactory} configured for serializing {@link BookingCreatedEvent} messages.
+     */
     @Bean
     public ProducerFactory<String, BookingCreatedEvent> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                JsonSerializer.class
-        );
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * Creates a {@link KafkaTemplate} for publishing {@link BookingCreatedEvent} messages.
+     */
     @Bean
     public KafkaTemplate<String, BookingCreatedEvent> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());

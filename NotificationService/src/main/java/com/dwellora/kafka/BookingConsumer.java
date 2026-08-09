@@ -18,7 +18,9 @@ public class BookingConsumer {
         this.repository = repository;
     }
 
-    @KafkaListener(topics = "booking-created", groupId = "notification-group",
+    @KafkaListener(
+            topics = "booking-created",
+            groupId = "notification-group",
             containerFactory = "bookingKafkaListenerContainerFactory")
     @Transactional
     public void consume(BookingCreatedEvent event) {

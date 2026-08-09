@@ -3,13 +3,16 @@ package com.dwellora.event;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Event payload transfer object published when a new amenity booking is successfully created.
+ */
 public class BookingCreatedEvent {
 
-    private Integer bookingId;
+    private Long bookingId;
 
-    private Integer userId;
+    private Long userId;
 
-    private Integer amenityId;
+    private Long amenityId;
 
     private String amenityName;
 
@@ -19,17 +22,16 @@ public class BookingCreatedEvent {
 
     private LocalTime endTime;
 
-    public BookingCreatedEvent() {
-    }
+    public BookingCreatedEvent() {}
 
     public BookingCreatedEvent(
-            Integer bookingId,
-            Integer userId,
-            Integer amenityId,
+            Long bookingId,
+            Long userId,
+            Long amenityId,
             String amenityName,
             LocalDate bookingDate,
             LocalTime startTime,
-            LocalTime endTime){
+            LocalTime endTime) {
 
         this.bookingId = bookingId;
         this.userId = userId;
@@ -40,27 +42,27 @@ public class BookingCreatedEvent {
         this.endTime = endTime;
     }
 
-    public Integer getBookingId() {
+    public Long getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(Integer bookingId) {
+    public void setBookingId(Long bookingId) {
         this.bookingId = bookingId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getAmenityId() {
+    public Long getAmenityId() {
         return amenityId;
     }
 
-    public void setAmenityId(Integer amenityId) {
+    public void setAmenityId(Long amenityId) {
         this.amenityId = amenityId;
     }
 

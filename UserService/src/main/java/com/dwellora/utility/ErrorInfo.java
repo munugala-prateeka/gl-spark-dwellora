@@ -2,6 +2,9 @@ package com.dwellora.utility;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents structured error response details returned by global exception handlers.
+ */
 public class ErrorInfo {
 
     private LocalDateTime timestamp;

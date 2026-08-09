@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+/**
+ * Data transfer object for creating or updating an apartment.
+ */
 public class ApartmentRequestDTO {
 
     @NotBlank(message = "Apartment name is required")

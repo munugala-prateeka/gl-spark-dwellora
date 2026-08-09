@@ -2,57 +2,47 @@ package com.dwellora.repository;
 
 import com.dwellora.entity.Booking;
 import com.dwellora.enums.BookingStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookingRepository extends JpaRepository<Booking, Integer> {
+/**
+ * Repository interface for managing {@link Booking} persistence operations and custom queries.
+ */
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findByUserId(Integer userId);
+    List<Booking> findByUserId(Long userId);
 
-    List<Booking> findByAmenityId(Integer amenityId);
+    List<Booking> findByAmenityId(Long amenityId);
 
     List<Booking> findByBookingDate(LocalDate bookingDate);
 
-    List<Booking> findByAmenityIdAndBookingDate(
-            Integer amenityId,
-            LocalDate bookingDate);
+    List<Booking> findByAmenityIdAndBookingDate(Long amenityId, LocalDate bookingDate);
 
     long countByAmenityIdAndBookingDateAndStartTimeAndEndTime(
-            Integer amenityId,
-            LocalDate bookingDate,
-            LocalTime startTime,
-            LocalTime endTime);
+            Long amenityId, LocalDate bookingDate, LocalTime startTime, LocalTime endTime);
 
     long countByBookingDate(LocalDate bookingDate);
 
-
     long countByUserIdAndBookingDateAndBookingStatus(
-            Integer userId,
-            LocalDate bookingDate,
-            BookingStatus bookingStatus
-    );
+            Long userId, LocalDate bookingDate, BookingStatus bookingStatus);
 
     List<Booking> findByAmenityIdAndBookingDateAndBookingStatus(
-            Integer amenityId,
-            LocalDate bookingDate,
-            BookingStatus bookingStatus
-    );
+            Long amenityId, LocalDate bookingDate, BookingStatus bookingStatus);
 
     long countByUserIdAndAmenityIdAndBookingDateAndBookingStatus(
-            Integer userId,
-            Integer amenityId,
-            LocalDate bookingDate,
-            BookingStatus bookingStatus
-    );
+            Long userId, Long amenityId, LocalDate bookingDate, BookingStatus bookingStatus);
 
     long countByUserIdAndAmenityIdAndBookingDateBetweenAndBookingStatus(
-            Integer userId,
-            Integer amenityId,
+            Long userId,
+            Long amenityId,
             LocalDate startDate,
             LocalDate endDate,
-            BookingStatus bookingStatus
-    );
+            BookingStatus bookingStatus);
+
+    List<Booking> findByApartmentId(Long apartmentId);
+
+    long countByApartmentIdAndBookingDateAndBookingStatus(
+            Long apartmentId, LocalDate bookingDate, BookingStatus bookingStatus);
 }

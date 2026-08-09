@@ -3,10 +3,13 @@ package com.dwellora.dto;
 import com.dwellora.enums.AccountStatus;
 import com.dwellora.enums.Role;
 
+/**
+ * Data transfer object for user response details.
+ */
 public class UserResponseDTO {
 
-    private Integer userId;
-    private Integer apartmentId;
+    private Long userId;
+    private Long apartmentId;
     private String fullName;
     private String email;
     private String phone;
@@ -17,8 +20,8 @@ public class UserResponseDTO {
     public UserResponseDTO() {}
 
     public UserResponseDTO(
-            Integer userId,
-            Integer apartmentId,
+            Long userId,
+            Long apartmentId,
             String fullName,
             String email,
             String phone,
@@ -35,19 +38,19 @@ public class UserResponseDTO {
         this.accountStatus = accountStatus;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 

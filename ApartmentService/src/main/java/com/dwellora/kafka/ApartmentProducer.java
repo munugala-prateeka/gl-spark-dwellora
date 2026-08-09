@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for publishing apartment creation events to Kafka.
+ */
 @Service
 public class ApartmentProducer {
 
@@ -19,6 +22,9 @@ public class ApartmentProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
+    /**
+     * Publishes an apartment created event to the Kafka topic.
+     */
     public void publish(ApartmentCreatedEvent event) {
         kafkaTemplate.send(TOPIC, event);
         logger.info("Apartment Created Event Published");

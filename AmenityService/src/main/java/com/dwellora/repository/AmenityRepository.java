@@ -4,9 +4,12 @@ import com.dwellora.entity.Amenity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AmenityRepository extends JpaRepository<Amenity, Integer> {
+/** JPA repository interface for managing Amenity persistence. */
+public interface AmenityRepository extends JpaRepository<Amenity, Long> {
 
-    List<Amenity> findByApartmentId(Integer apartmentId);
+    /** Finds all amenities for a given apartment ID. */
+    List<Amenity> findByApartmentId(Long apartmentId);
 
-    boolean existsByApartmentIdAndAmenityName(Integer apartmentId, String amenityName);
+    /** Checks if an amenity with the given name exists in an apartment. */
+    boolean existsByApartmentIdAndAmenityName(Long apartmentId, String amenityName);
 }

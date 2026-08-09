@@ -5,13 +5,12 @@ import com.dwellora.enums.NotificationType;
 import com.dwellora.event.ComplaintCreatedEvent;
 import com.dwellora.event.ComplaintUpdatedEvent;
 import com.dwellora.repository.NotificationRepository;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 public class ComplaintConsumer {
@@ -23,7 +22,9 @@ public class ComplaintConsumer {
         this.repository = repository;
     }
 
-    @KafkaListener(topics = "complaint-created", groupId = "notification-group",
+    @KafkaListener(
+            topics = "complaint-created",
+            groupId = "notification-group",
             containerFactory = "complaintCreatedKafkaListenerContainerFactory")
     @Transactional
     public void consumeCreated(ComplaintCreatedEvent event) {
@@ -33,8 +34,12 @@ public class ComplaintConsumer {
         notification.setUserId(event.getUserId());
         notification.setType(NotificationType.COMPLAINT);
         notification.setTitle("Complaint Registered");
-        notification.setMessage("Your complaint regarding '" + event.getCategory() + "' for flat "
-                + event.getFlatNumber() + " has been successfully submitted and is currently OPEN.");
+        notification.setMessage(
+                "Your complaint regarding '"
+                        + event.getCategory()
+                        + "' for flat "
+                        + event.getFlatNumber()
+                        + " has been successfully submitted and is currently OPEN.");
         notification.setRead(false);
         notification.setCreatedAt(LocalDateTime.now());
 
@@ -42,7 +47,9 @@ public class ComplaintConsumer {
         logger.info("Saved complaint creation notification for user {}", event.getUserId());
     }
 
-    @KafkaListener(topics = "complaint-updated", groupId = "notification-group",
+    @KafkaListener(
+            topics = "complaint-updated",
+            groupId = "notification-group",
             containerFactory = "complaintKafkaListenerContainerFactory")
     @Transactional
     public void consume(ComplaintUpdatedEvent event) {
@@ -63,7 +70,12 @@ public class ComplaintConsumer {
     }
 
     private String buildNotificationMessage(ComplaintUpdatedEvent event) {
-        String baseMessage = "Your complaint regarding '" + event.getCategory() + "' status has been changed to " + event.getStatus() + ".";
+        String baseMessage =
+                "Your complaint regarding '"
+                        + event.getCategory()
+                        + "' status has been changed to "
+                        + event.getStatus()
+                        + ".";
 
         if ("IN_PROGRESS".equalsIgnoreCase(event.getStatus())) {
             baseMessage += " Maintenance team is working on it.";

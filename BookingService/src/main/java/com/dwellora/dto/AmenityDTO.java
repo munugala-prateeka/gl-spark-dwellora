@@ -2,10 +2,13 @@ package com.dwellora.dto;
 
 import java.time.LocalTime;
 
+/**
+ * Data transfer object containing amenity operational details and booking constraints fetched from external microservices.
+ */
 public class AmenityDTO {
 
-    private Integer amenityId;
-    private Integer apartmentId;
+    private Long amenityId;
+    private Long apartmentId;
     private String amenityName;
     private String amenityType;
     private Integer capacity;
@@ -18,23 +21,21 @@ public class AmenityDTO {
     private Integer maxBookingsPerDay;
     private Integer maxBookingsPerMonth;
 
+    public AmenityDTO() {}
 
-    public AmenityDTO() {
-    }
-
-    public Integer getAmenityId() {
+    public Long getAmenityId() {
         return amenityId;
     }
 
-    public void setAmenityId(Integer amenityId) {
+    public void setAmenityId(Long amenityId) {
         this.amenityId = amenityId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 
@@ -117,5 +118,4 @@ public class AmenityDTO {
     public void setMaxBookingsPerMonth(Integer maxBookingsPerMonth) {
         this.maxBookingsPerMonth = maxBookingsPerMonth;
     }
-
 }

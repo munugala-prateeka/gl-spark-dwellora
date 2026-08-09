@@ -2,10 +2,11 @@ package com.dwellora.dto;
 
 import java.time.LocalDateTime;
 
+/** Data transfer object containing notice details in response payloads. */
 public class NoticeResponseDTO {
 
-    private Integer noticeId;
-    private Integer apartmentId;
+    private Long noticeId;
+    private Long apartmentId;
     private String title;
     private String body;
     private Boolean isUrgent;
@@ -14,8 +15,14 @@ public class NoticeResponseDTO {
 
     public NoticeResponseDTO() {}
 
-    public NoticeResponseDTO(Integer noticeId, Integer apartmentId, String title, String body,
-                             Boolean isUrgent, LocalDateTime publishedAt, LocalDateTime expiresAt) {
+    public NoticeResponseDTO(
+            Long noticeId,
+            Long apartmentId,
+            String title,
+            String body,
+            Boolean isUrgent,
+            LocalDateTime publishedAt,
+            LocalDateTime expiresAt) {
         this.noticeId = noticeId;
         this.apartmentId = apartmentId;
         this.title = title;
@@ -25,11 +32,31 @@ public class NoticeResponseDTO {
         this.expiresAt = expiresAt;
     }
 
-    public Integer getNoticeId() { return noticeId; }
-    public Integer getApartmentId() { return apartmentId; }
-    public String getTitle() { return title; }
-    public String getBody() { return body; }
-    public Boolean getIsUrgent() { return isUrgent; }
-    public LocalDateTime getPublishedAt() { return publishedAt; }
-    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public Long getNoticeId() {
+        return noticeId;
+    }
+
+    public Long getApartmentId() {
+        return apartmentId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public Boolean getIsUrgent() {
+        return isUrgent;
+    }
+
+    public LocalDateTime getPublishedAt() {
+        return publishedAt;
+    }
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
 }

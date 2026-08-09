@@ -5,13 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Data transfer object containing request payload for booking an amenity slot.
+ */
 public class BookingRequestDTO {
 
-    @NotNull(message = "User ID is required")
-    private Integer userId;
-
     @NotNull(message = "Amenity ID is required")
-    private Integer amenityId;
+    private Long amenityId;
 
     @NotNull(message = "Booking date is required")
     @FutureOrPresent(message = "Booking date cannot be in the past")
@@ -23,29 +23,45 @@ public class BookingRequestDTO {
     @NotNull(message = "End time is required")
     private LocalTime endTime;
 
-    public BookingRequestDTO() {
-    }
+    public BookingRequestDTO() {}
 
-    public BookingRequestDTO(Integer userId, Integer amenityId, LocalDate bookingDate, LocalTime startTime, LocalTime endTime) {
-        this.userId = userId;
+    public BookingRequestDTO(
+            Long amenityId, LocalDate bookingDate, LocalTime startTime, LocalTime endTime) {
         this.amenityId = amenityId;
         this.bookingDate = bookingDate;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
+    public Long getAmenityId() {
+        return amenityId;
+    }
 
-    public Integer getAmenityId() { return amenityId; }
-    public void setAmenityId(Integer amenityId) { this.amenityId = amenityId; }
+    public void setAmenityId(Long amenityId) {
+        this.amenityId = amenityId;
+    }
 
-    public LocalDate getBookingDate() { return bookingDate; }
-    public void setBookingDate(LocalDate bookingDate) { this.bookingDate = bookingDate; }
+    public LocalDate getBookingDate() {
+        return bookingDate;
+    }
 
-    public LocalTime getStartTime() { return startTime; }
-    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
+    public void setBookingDate(LocalDate bookingDate) {
+        this.bookingDate = bookingDate;
+    }
 
-    public LocalTime getEndTime() { return endTime; }
-    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
 }

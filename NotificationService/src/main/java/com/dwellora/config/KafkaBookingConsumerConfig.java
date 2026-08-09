@@ -12,9 +12,15 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+/**
+ * Configuration class for setting up Kafka consumer components handling booking events.
+ */
 @Configuration
 public class KafkaBookingConsumerConfig {
 
+    /**
+     * Creates a {@link ConsumerFactory} configured for deserializing {@link BookingCreatedEvent} payloads.
+     */
     @Bean
     public ConsumerFactory<String, BookingCreatedEvent> bookingConsumerFactory() {
         JsonDeserializer<BookingCreatedEvent> deserializer =
@@ -30,6 +36,9 @@ public class KafkaBookingConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
+    /**
+     * Creates a {@link ConcurrentKafkaListenerContainerFactory} for booking event listeners.
+     */
     @Bean(name = "bookingKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, BookingCreatedEvent>
     managerKafkaListenerContainerFactory() {

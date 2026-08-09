@@ -3,11 +3,12 @@ package com.dwellora.dto;
 import com.dwellora.enums.ComplaintStatus;
 import java.time.LocalDateTime;
 
+/** Data transfer object containing complaint details in response payloads. */
 public class ComplaintResponseDTO {
 
-    private Integer complaintId;
-    private Integer apartmentId;
-    private Integer userId;
+    private Long complaintId;
+    private Long apartmentId;
+    private Long userId;
     private String flatNumber;
     private String category;
     private String description;
@@ -18,9 +19,17 @@ public class ComplaintResponseDTO {
 
     public ComplaintResponseDTO() {}
 
-    public ComplaintResponseDTO(Integer complaintId, Integer apartmentId, Integer userId, String flatNumber,
-                                String category, String description, ComplaintStatus status,
-                                String resolutionRemark, LocalDateTime raisedAt, LocalDateTime resolvedAt) {
+    public ComplaintResponseDTO(
+            Long complaintId,
+            Long apartmentId,
+            Long userId,
+            String flatNumber,
+            String category,
+            String description,
+            ComplaintStatus status,
+            String resolutionRemark,
+            LocalDateTime raisedAt,
+            LocalDateTime resolvedAt) {
         this.complaintId = complaintId;
         this.apartmentId = apartmentId;
         this.userId = userId;
@@ -33,14 +42,43 @@ public class ComplaintResponseDTO {
         this.resolvedAt = resolvedAt;
     }
 
-    public Integer getComplaintId() { return complaintId; }
-    public Integer getApartmentId() { return apartmentId; }
-    public Integer getUserId() { return userId; }
-    public String getFlatNumber() { return flatNumber; }
-    public String getCategory() { return category; }
-    public String getDescription() { return description; }
-    public ComplaintStatus getStatus() { return status; }
-    public String getResolutionRemark() { return resolutionRemark; }
-    public LocalDateTime getRaisedAt() { return raisedAt; }
-    public LocalDateTime getResolvedAt() { return resolvedAt; }
+    public Long getComplaintId() {
+        return complaintId;
+    }
+
+    public Long getApartmentId() {
+        return apartmentId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getFlatNumber() {
+        return flatNumber;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ComplaintStatus getStatus() {
+        return status;
+    }
+
+    public String getResolutionRemark() {
+        return resolutionRemark;
+    }
+
+    public LocalDateTime getRaisedAt() {
+        return raisedAt;
+    }
+
+    public LocalDateTime getResolvedAt() {
+        return resolvedAt;
+    }
 }

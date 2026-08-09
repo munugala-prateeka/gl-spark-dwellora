@@ -3,6 +3,9 @@ package com.dwellora.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Data transfer object for user login requests.
+ */
 public class LoginRequestDTO {
 
     @NotBlank(message = "Email is required")

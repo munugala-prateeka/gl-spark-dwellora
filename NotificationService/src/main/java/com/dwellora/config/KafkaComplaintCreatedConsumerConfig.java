@@ -1,6 +1,8 @@
 package com.dwellora.config;
 
 import com.dwellora.event.ComplaintCreatedEvent;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -10,12 +12,15 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * Configuration class for setting up Kafka consumer components handling complaint creation events.
+ */
 @Configuration
 public class KafkaComplaintCreatedConsumerConfig {
 
+    /**
+     * Creates a {@link ConsumerFactory} configured for deserializing {@link ComplaintCreatedEvent} payloads.
+     */
     @Bean
     public ConsumerFactory<String, ComplaintCreatedEvent> complaintCreatedConsumerFactory() {
         JsonDeserializer<ComplaintCreatedEvent> deserializer =
@@ -31,6 +36,9 @@ public class KafkaComplaintCreatedConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
+    /**
+     * Creates a {@link ConcurrentKafkaListenerContainerFactory} for complaint creation event listeners.
+     */
     @Bean(name = "complaintCreatedKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, ComplaintCreatedEvent>
     complaintCreatedKafkaListenerContainerFactory() {

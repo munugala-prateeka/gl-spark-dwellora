@@ -4,17 +4,25 @@ import com.dwellora.dto.AmenityRequestDTO;
 import com.dwellora.dto.AmenityResponseDTO;
 import java.util.List;
 
+/** Service interface for amenity management operations. */
 public interface AmenityService {
 
-    AmenityResponseDTO addAmenity(AmenityRequestDTO request);
+    /** Creates a new amenity for an apartment. */
+    AmenityResponseDTO addAmenity(Long apartmentId, AmenityRequestDTO request);
 
+    /** Retrieves all amenities in the system. */
     List<AmenityResponseDTO> getAllAmenities();
 
-    AmenityResponseDTO getAmenityById(Integer amenityId);
+    /** Retrieves an amenity by ID for a given apartment. */
+    AmenityResponseDTO getAmenityById(Long amenityId, Long apartmentId);
 
-    AmenityResponseDTO updateAmenity(Integer amenityId, AmenityRequestDTO request);
+    /** Updates an existing amenity for an apartment. */
+    AmenityResponseDTO updateAmenity(
+            Long apartmentId, Long amenityId, AmenityRequestDTO request);
 
-    void deleteAmenity(Integer amenityId);
+    /** Deletes an amenity by ID for a given apartment. */
+    void deleteAmenity(Long amenityId, Long apartmentId);
 
-    List<AmenityResponseDTO> getAmenitiesByApartment(Integer apartmentId);
+    /** Retrieves all amenities belonging to a specific apartment. */
+    List<AmenityResponseDTO> getAmenitiesByApartment(Long apartmentId);
 }

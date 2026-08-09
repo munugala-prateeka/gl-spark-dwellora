@@ -6,12 +6,14 @@ import com.dwellora.enums.Role;
 import com.dwellora.event.ApartmentCreatedEvent;
 import com.dwellora.event.ManagerCreatedEvent;
 import com.dwellora.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
+/**
+ * Kafka consumer for processing apartment creation events and initializing manager accounts.
+ */
 @Service
 public class ApartmentCreatedConsumer {
 
@@ -23,13 +25,16 @@ public class ApartmentCreatedConsumer {
         this.producer = producer;
     }
 
+    /**
+     * Consumes an apartment created event, creates a manager user, and publishes a manager created event.
+     */
     @KafkaListener(topics = "apartment-created", groupId = "user-group")
     public void consume(ApartmentCreatedEvent event) {
 
         User manager = new User();
         manager.setApartmentId(event.getApartmentId());
         manager.setFullName(event.getManagerName());
-        manager.setEmail(event.getManagerEmail());
+        manager.setEmail(event.getManagerEmail().trim().toLowerCase());
         manager.setPhone(event.getManagerPhone());
         manager.setFlatNumber("Office");
         manager.setRole(Role.MANAGER);

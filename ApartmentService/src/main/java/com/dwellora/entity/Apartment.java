@@ -10,6 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * Entity representing an apartment.
+ */
 @Entity
 @Table(name = "apartments")
 public class Apartment {
@@ -17,7 +20,7 @@ public class Apartment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "apartment_id")
-    private Integer apartmentId;
+    private Long apartmentId;
 
     @Column(name = "apartment_name")
     private String apartmentName;
@@ -39,7 +42,7 @@ public class Apartment {
     public Apartment() {}
 
     public Apartment(
-            Integer apartmentId,
+            Long apartmentId,
             String apartmentName,
             String address,
             String city,
@@ -59,11 +62,11 @@ public class Apartment {
         this.status = status;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 

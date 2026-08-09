@@ -3,6 +3,7 @@ package com.dwellora.dto;
 import com.dwellora.enums.ComplaintStatus;
 import jakarta.validation.constraints.NotNull;
 
+/** Data transfer object for updating complaint status and resolution details. */
 public class ComplaintUpdateDTO {
 
     @NotNull(message = "Status is required")
@@ -17,9 +18,19 @@ public class ComplaintUpdateDTO {
         this.resolutionRemark = resolutionRemark;
     }
 
-    public ComplaintStatus getStatus() { return status; }
-    public void setStatus(ComplaintStatus status) { this.status = status; }
+    public ComplaintStatus getStatus() {
+        return status;
+    }
 
-    public String getResolutionRemark() { return resolutionRemark; }
-    public void setResolutionRemark(String resolutionRemark) { this.resolutionRemark = resolutionRemark; }
+    public void setStatus(ComplaintStatus status) {
+        this.status = status;
+    }
+
+    public String getResolutionRemark() {
+        return resolutionRemark;
+    }
+
+    public void setResolutionRemark(String resolutionRemark) {
+        this.resolutionRemark = resolutionRemark;
+    }
 }
