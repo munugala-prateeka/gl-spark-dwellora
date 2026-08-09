@@ -18,14 +18,14 @@ apartment complex kept fully isolated from every other one on the platform.
                                     │
                                     │  Authorization: Bearer <JWT>
                                     ▼
-                         ┌─────────────────────┐
+                         ┌──────────────────────┐
                          │   API Gateway :8769  │  ← validates JWT signature
                          │  (Spring Cloud GW)   │    + expiry ONCE, forwards
                          └──────────┬───────────┘    X-User-Id / X-User-Role /
                                     │                 X-Apartment-Id headers
               ┌─────────────────────┼─────────────────────┐
               ▼                     ▼                     ▼
-     ┌────────────────┐   ┌─────────────────┐   ┌──────────────────┐
+     ┌─────────────────┐   ┌──────────────────┐   ┌──────────────────┐
      │  UserService    │   │ OnboardingService│   │ ApartmentService │
      │     :8083       │   │      :8081       │   │      :8082       │
      └────────┬────────┘   └────────┬─────────┘   └──────────────────┘
@@ -33,21 +33,21 @@ apartment complex kept fully isolated from every other one on the platform.
               │                     │         apartment-created →
               │                     │         manager-created
               ▼                     ▼
-     ┌────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+     ┌─────────────────┐   ┌──────────────────┐   ┌───────────────────┐
      │ AmenityService  │   │  BookingService  │   │ MaintenanceService│
      │     :8084       │   │      :8085       │   │      :8088        │
-     └────────────────┘   └──────────────────┘   └──────────────────┘
+     └─────────────────┘   └──────────────────┘   └───────────────────┘
 
-     ┌────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+     ┌─────────────────┐   ┌──────────────────┐   ┌───────────────────┐
      │  NoticeService  │   │   EventService   │   │NotificationService│
      │     :8089       │   │      :8086       │   │      :8087        │
-     └────────────────┘   └──────────────────┘   └──────────────────┘
+     └─────────────────┘   └──────────────────┘   └───────────────────┘
                                                    ↑ consumes every
                                                      domain event via Kafka
                                                      for in-app + email
                                                      notifications
 
-     Eureka Server :8761 — service registry, every service above
+     Eureka Server : 8761 — service registry, every service above
      registers with it and discovers each other by name for both
      REST (Feign) and Gateway routing.
 ```
