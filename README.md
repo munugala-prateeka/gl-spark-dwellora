@@ -97,9 +97,8 @@ Each service is a standalone Maven module built against a shared parent POM
    `X-Apartment-Id` headers first** (so a caller can't spoof identity by just
    setting those headers themselves), then writes its own trusted versions
    derived from the verified token.
-3. Every downstream service — including `UserService` itself — runs a small
-   `HeaderAuthFilter` that reads those three headers and populates Spring
-   Security's context. 
+3. Every downstream service  runs a small `HeaderAuthFilter` that reads
+   those three headers and populates Spring Security's context. 
 4. `@PreAuthorize("hasRole('...')")` on each controller method enforces the
    role required per endpoint (see table below). Endpoints without an
    annotation just require `.authenticated()` — any logged-in role.
@@ -166,7 +165,7 @@ with a clear error instead of hanging on a TCP timeout.
 ### Databases
 
 Each service owns its schema and creates/updates its own tables on startup
-(`spring.jpa.hibernate.ddl-auto=update`) — you only need to create the empty
+(`spring.jpa.hibernate.ddl-auto=update`),  you only need to create the empty
 databases up front:
 
 ```sql
@@ -202,7 +201,7 @@ start at all.
 
 ## Running locally
 
-Start in this order — each service registers with Eureka on boot and needs it
+Start in this order: each service registers with Eureka on boot and needs it
 running first; services calling each other via Feign need their target
 registered before the call, not before their own startup.
 
@@ -230,7 +229,7 @@ Check the Eureka dashboard at `http://localhost:8761` — all 10 services (9
 above + the Gateway) should show as `UP` before you start testing.
 
 There is currently no seeded `PLATFORM_ADMIN` account and no API endpoint to
-create one (by design — admins aren't self-service). Insert one directly:
+create one (by design admins aren't self-service). Insert one directly:
 
 ```sql
 INSERT INTO users (email, full_name, password, role, account_status)
