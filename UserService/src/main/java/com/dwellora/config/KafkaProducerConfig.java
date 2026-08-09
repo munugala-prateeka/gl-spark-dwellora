@@ -11,9 +11,15 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+/**
+ * Kafka producer configuration for publishing generic messages to Kafka topics.
+ */
 @Configuration
 public class KafkaProducerConfig {
 
+    /**
+     * Configures and creates the Kafka producer factory instance.
+     */
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -23,6 +29,9 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(props);
     }
 
+    /**
+     * Configures and creates the Kafka template for sending messages.
+     */
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());

@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for publishing resident creation events to Kafka.
+ */
 @Service
 public class ResidentProducer {
 
@@ -16,6 +19,9 @@ public class ResidentProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
+    /**
+     * Publishes a resident created event to the Kafka topic.
+     */
     public void publish(ResidentCreatedEvent event) {
         kafkaTemplate.send("resident-created", event);
         logger.info("Resident Created Event Published");

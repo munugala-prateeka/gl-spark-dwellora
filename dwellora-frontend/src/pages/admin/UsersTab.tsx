@@ -2,25 +2,35 @@ import { useEffect, useState, useMemo } from "react";
 import { Box, Typography, Chip, TextField, MenuItem, Stack, Snackbar, Alert, Avatar, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { userApi } from "../../api/userApi";
-import type { UserResponse } from "../../api/types";
+import { apartmentApi } from "../../api/apartmentApi";
+import type { UserResponse, ApartmentResponse } from "../../api/types";
 import { statusColor } from "../../theme/theme";
 
 export default function UsersTab() {
   const [users, setUsers] = useState<UserResponse[]>([]);
+  const [apartments, setApartments] = useState<ApartmentResponse[]>([]);
   const [roleFilter, setRoleFilter] = useState("ALL");
   const [q, setQ] = useState("");
   const [toast, setToast] = useState("");
 
-  useEffect(() => { userApi.getAll().then(setUsers).catch(() => setToast("Could not load users.")); }, []);
+  useEffect(() => {
+    userApi.getAll().then(setUsers).catch(() => setToast("Could not load users."));
+    apartmentApi.getAll().then(setApartments).catch(() => {});
+  }, []);
+
+  const apartmentMap = useMemo(() => new Map(apartments.map(a => [a.apartmentId, a.apartmentName])), [apartments]);
 
   const filtered = useMemo(() => {
     let list = roleFilter === "ALL" ? users : users.filter((u) => u.role === roleFilter);
     if (q.trim()) {
       const s = q.toLowerCase();
-      list = list.filter(u => `${u.fullName} ${u.email} ${u.phone}`.toLowerCase().includes(s));
+      list = list.filter(u => {
+        const aptName = u.apartmentId ? apartmentMap.get(u.apartmentId) ?? "" : "";
+        return `${u.fullName} ${u.email} ${u.phone} ${aptName}`.toLowerCase().includes(s);
+      });
     }
     return list;
-  }, [users, roleFilter, q]);
+  }, [users, roleFilter, q, apartmentMap]);
 
   return (
     <Box>
@@ -31,28 +41,28 @@ export default function UsersTab() {
         </Box>
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <TextField
-  size="small"
-  placeholder="Search name, email..."
-  value={q}
-  onChange={(e) => setQ(e.target.value)}
-  slotProps={{
-    input: {
-      startAdornment: (
-        <InputAdornment position="start">
-          <SearchIcon sx={{ color: "#B08442", fontSize: 18 }} />
-        </InputAdornment>
-      ),
-    },
-  }}
-  sx={{
-    width: 220,
-    "& .MuiOutlinedInput-root": {
-      bgcolor: "#FFFDF9",
-      borderRadius: 2.5,
-      "& fieldset": { borderColor: "#E6DCC9" },
-    },
-  }}
-/>
+            size="small"
+            placeholder="Search name, email, apartment..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "#B08442", fontSize: 18 }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            sx={{
+              width: 260,
+              "& .MuiOutlinedInput-root": {
+                bgcolor: "#FFFDF9",
+                borderRadius: 2.5,
+                "& fieldset": { borderColor: "#E6DCC9" },
+              },
+            }}
+          />
           <TextField select size="small" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} sx={{ minWidth: 160, bgcolor: "#FFFDF9" }}>
             <MenuItem value="ALL">All roles</MenuItem>
             <MenuItem value="PLATFORM_ADMIN">Platform Admin</MenuItem>
@@ -82,7 +92,7 @@ export default function UsersTab() {
                     </Stack>
                   </Box>
                   <Box component="td" sx={{ px: 2.5, py: 1.8 }}><Chip size="small" label={u.role.replace("_", " ")} sx={{ bgcolor: "#E9EBDD", color: "#2E3A25", fontWeight: 700, height: 22, border: "1px solid #DDE0CB" }} /></Box>
-                  <Box component="td" sx={{ px: 2.5, py: 1.8, color: "#6B7A5C", fontWeight: 600 }}>{u.apartmentId ?? "—"}</Box>
+                  <Box component="td" sx={{ px: 2.5, py: 1.8, color: "#2E3A25", fontWeight: 600, whiteSpace: "nowrap" }}>{u.apartmentId ? (apartmentMap.get(u.apartmentId) ?? `#${u.apartmentId}`) : "—"}</Box>
                   <Box component="td" sx={{ px: 2.5, py: 1.8, color: "#2E3A25", fontWeight: 500 }}>{u.email}</Box>
                   <Box component="td" sx={{ px: 2.5, py: 1.8, color: "#6B7A5C" }}>{u.phone ?? "—"}</Box>
                   <Box component="td" sx={{ px: 2.5, py: 1.8 }}><Chip size="small" label={u.accountStatus} color={statusColor[u.accountStatus] as any} sx={{ fontWeight: 700 }} /></Box>

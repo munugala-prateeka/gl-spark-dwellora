@@ -1,13 +1,11 @@
 package com.dwellora.exception;
 
-public class OnboardingException
-        extends RuntimeException {
+/**
+ * Custom runtime exception thrown for onboarding-related errors.
+ */
+public class OnboardingException extends RuntimeException {
 
-    public OnboardingException(
-            String message) {
-
+    public OnboardingException(String message) {
         super(message);
-
     }
-
 }

@@ -1,15 +1,16 @@
 package com.dwellora.security;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-
+/**
+ * Utility class for generating and handling JSON Web Tokens (JWTs).
+ */
 @Component
 public class JwtUtil {
 
@@ -17,45 +18,30 @@ public class JwtUtil {
     private String secret;
 
     @Value("${jwt.expiration}")
-    private long expiration;
+    private Long expiration;
 
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(Integer userId, String email, String role) {
-        return Jwts.builder()
-                .subject(email)
-                .claim("userId", userId)
-                .claim("role", role)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getKey())
-                .compact();
-    }
+    /**
+     * Generates a signed JWT containing user identity, role, and optional apartment information.
+     */
+    public String generateToken(
+            Long userId, String email, String role, Long apartmentId) {
 
-    public Claims extractClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
+        var builder =
+                Jwts.builder()
+                        .subject(email)
+                        .claim("userId", userId)
+                        .claim("role", role)
+                        .issuedAt(new Date())
+                        .expiration(new Date(System.currentTimeMillis() + expiration));
 
-    public boolean isTokenValid(String token) {
-        try {
-            extractClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
+        if (apartmentId != null) {
+            builder.claim("apartmentId", apartmentId);
         }
-    }
 
-    public String extractEmail(String token) {
-        return extractClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractClaims(token).get("role", String.class);
+        return builder.signWith(getKey()).compact();
     }
 }

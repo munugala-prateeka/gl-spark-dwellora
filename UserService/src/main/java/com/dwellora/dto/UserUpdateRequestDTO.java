@@ -1,11 +1,13 @@
 package com.dwellora.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
+/**
+ * Data transfer object for user update requests.
+ */
 public class UserUpdateRequestDTO {
-
-    @NotNull(message = "Apartment ID is required")
-    private Integer apartmentId;
 
     @NotBlank(message = "Full name is required")
     private String fullName;
@@ -16,8 +18,9 @@ public class UserUpdateRequestDTO {
 
     @Pattern(
             regexp = "^$|^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&#]).{8,}$",
-            message = "Password must be at least 8 characters and include a letter, a number, and a special character (@$!%*?&#), if provided"
-    )
+            message =
+                    "Password must be at least 8 characters and include a letter, a number, and a special"
+                            + " character (@$!%*?&#), if provided")
     private String password;
 
     @NotBlank(message = "Phone number is required")
@@ -26,14 +29,6 @@ public class UserUpdateRequestDTO {
     private String flatNumber;
 
     public UserUpdateRequestDTO() {}
-
-    public Integer getApartmentId() {
-        return apartmentId;
-    }
-
-    public void setApartmentId(Integer apartmentId) {
-        this.apartmentId = apartmentId;
-    }
 
     public String getFullName() {
         return fullName;

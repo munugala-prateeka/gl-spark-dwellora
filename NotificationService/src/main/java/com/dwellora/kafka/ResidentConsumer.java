@@ -10,21 +10,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResidentConsumer {
 
-    private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(ResidentConsumer.class);
+    private final EmailService emailService;
 
     public ResidentConsumer(EmailService emailService) {
         this.emailService = emailService;
     }
 
-    @KafkaListener(topics = "resident-created", groupId = "resident-notification-group",
+    @KafkaListener(
+            topics = "resident-created",
+            groupId = "resident-notification-group",
             containerFactory = "residentKafkaListenerContainerFactory")
     public void consume(ResidentCreatedEvent event) {
         logger.info("Resident Created Event Received for: {}", event.getResidentEmail());
         emailService.sendResidentWelcomeEmail(
-                event.getResidentName(),
-                event.getResidentEmail(),
-                event.getActivationToken()
-        );
+                event.getResidentName(), event.getResidentEmail(), event.getActivationToken());
     }
 }

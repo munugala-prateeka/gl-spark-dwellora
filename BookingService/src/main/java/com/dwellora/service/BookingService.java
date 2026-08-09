@@ -4,32 +4,60 @@ import com.dwellora.dto.AdminBookingDTO;
 import com.dwellora.dto.AvailabilityDTO;
 import com.dwellora.dto.BookingRequestDTO;
 import com.dwellora.dto.BookingResponseDTO;
-import com.dwellora.entity.Booking;
-
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Service interface defining core operations for managing amenity bookings.
+ * Provides methods for booking creation, retrieval, cancellation, and availability checks.
+ */
 public interface BookingService {
 
-    BookingResponseDTO addBooking(BookingRequestDTO bookingRequestDTO);
+    /**
+     * Creates a new amenity booking for a specified user.
+     */
+    BookingResponseDTO addBooking(Long userId, BookingRequestDTO bookingRequestDTO);
 
+    /**
+     * Retrieves all existing bookings across the system.
+     */
     List<BookingResponseDTO> getAllBookings();
 
-    BookingResponseDTO getBookingById(Integer id);
+    /**
+     * Retrieves a single booking by its unique identifier.
+     */
+    BookingResponseDTO getBookingById(Long id);
 
+    /**
+     * Retrieves all bookings scheduled for a specific date.
+     */
     List<BookingResponseDTO> getBookingsByDate(LocalDate bookingDate);
 
-    BookingResponseDTO updateBooking(Integer id, BookingRequestDTO bookingRequestDTO);
+    // BookingResponseDTO updateBooking(Long id, BookingRequestDTO bookingRequestDTO);
+    // void deleteBooking(Long id);
 
-    void deleteBooking(Integer id);
+    /**
+     * Cancels an existing booking for a user if authorized.
+     */
+    BookingResponseDTO cancelBooking(Long bookingId, Long userId);
 
-    BookingResponseDTO cancelBooking(Integer bookingId);
+    /**
+     * Retrieves all bookings associated with a specific user.
+     */
+    List<BookingResponseDTO> getBookingsByUser(Long userId);
 
-    List<BookingResponseDTO> getBookingsByUser(Integer userId);
+    /**
+     * Checks and returns time-slot availability for an amenity on a given date.
+     */
+    List<AvailabilityDTO> getAvailability(Long amenityId, LocalDate bookingDate);
 
-    List<AvailabilityDTO> getAvailability(Integer amenityId, LocalDate bookingDate);
+    /**
+     * Retrieves all bookings belonging to a specific apartment complex.
+     */
+    List<AdminBookingDTO> getBookingsByApartment(Long apartmentId);
 
-    List<AdminBookingDTO> getBookingsByApartment(Integer apartmentId);
-
-    Long getTodayBookingCount(Integer apartmentId);
+    /**
+     * Counts the total active bookings for today within an apartment complex.
+     */
+    Long getTodayBookingCount(Long apartmentId);
 }

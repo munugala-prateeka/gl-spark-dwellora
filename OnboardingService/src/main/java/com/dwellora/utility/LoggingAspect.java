@@ -9,12 +9,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * Aspect for logging method execution in service implementations and Kafka components.
+ */
 @Aspect
 @Component
 public class LoggingAspect {
 
     private final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
+    /**
+     * Logs details before method execution.
+     */
     @Before(
             "execution(* com.dwellora.service.impl.*.*(..)) || execution(*"
                     + " com.dwellora.kafka.*.*(..))")
@@ -22,6 +28,9 @@ public class LoggingAspect {
         logger.info("Executing Method : {}", joinPoint.getSignature().getName());
     }
 
+    /**
+     * Logs details after successful method execution.
+     */
     @AfterReturning(
             pointcut =
                     "execution(* com.dwellora.service.impl.*.*(..)) || execution(*"
@@ -31,12 +40,16 @@ public class LoggingAspect {
         logger.info("Completed Method : {}", joinPoint.getSignature().getName());
     }
 
+    /**
+     * Logs details when a method throws an exception.
+     */
     @AfterThrowing(
             pointcut =
                     "execution(* com.dwellora.service.impl.*.*(..)) || execution(*"
                             + " com.dwellora.kafka.*.*(..))",
             throwing = "error")
     public void logAfterThrowing(JoinPoint joinPoint, Exception error) {
-        logger.error("Exception in {} : {}", joinPoint.getSignature().getName(), error.getMessage());
+        logger.error(
+                "Exception in {} : {}", joinPoint.getSignature().getName(), error.getMessage());
     }
 }

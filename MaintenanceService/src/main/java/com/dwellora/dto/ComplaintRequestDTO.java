@@ -1,12 +1,9 @@
 package com.dwellora.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
+/** Data transfer object for raising a new complaint. */
 public class ComplaintRequestDTO {
-
-    @NotNull(message = "Apartment ID is required")
-    private Integer apartmentId;
 
     @NotBlank(message = "Category is required")
     private String category;
@@ -16,10 +13,19 @@ public class ComplaintRequestDTO {
 
     public ComplaintRequestDTO() {}
 
-    public Integer getApartmentId() { return apartmentId; }
-    public void setApartmentId(Integer apartmentId) { this.apartmentId = apartmentId; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

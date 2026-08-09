@@ -1,19 +1,21 @@
 package com.dwellora.dto;
 
+/**
+ * Data transfer object for user login responses.
+ */
 public class LoginResponseDTO {
 
-    private Integer userId;
-    private Integer apartmentId;
+    private Long userId;
+    private Long apartmentId;
     private String fullName;
     private String role;
     private String email;
-    // add field + getter/setter
     private String token;
 
     public LoginResponseDTO() {}
 
     public LoginResponseDTO(
-            Integer userId, Integer apartmentId, String fullName, String role, String email) {
+            Long userId, Long apartmentId, String fullName, String role, String email) {
         this.userId = userId;
         this.apartmentId = apartmentId;
         this.fullName = fullName;
@@ -21,19 +23,19 @@ public class LoginResponseDTO {
         this.email = email;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 
@@ -64,6 +66,7 @@ public class LoginResponseDTO {
     public String getToken() {
         return token;
     }
+
     public void setToken(String token) {
         this.token = token;
     }

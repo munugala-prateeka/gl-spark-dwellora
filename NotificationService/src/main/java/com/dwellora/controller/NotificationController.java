@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for managing notifications.
+ */
 @RestController
 @RequestMapping("/notifications")
 public class NotificationController {
@@ -20,14 +23,20 @@ public class NotificationController {
         this.service = service;
     }
 
+    /**
+     * Retrieves all notifications for a given user ID.
+     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<NotificationResponseDTO>> getNotifications(
-            @PathVariable Integer userId) {
+            @PathVariable Long userId) {
         return ResponseEntity.ok(service.getUserNotifications(userId));
     }
 
+    /**
+     * Marks a notification as read by its ID.
+     */
     @PutMapping("/{id}/read")
-    public ResponseEntity<NotificationResponseDTO> markRead(@PathVariable Integer id) {
+    public ResponseEntity<NotificationResponseDTO> markRead(@PathVariable Long id) {
         return ResponseEntity.ok(service.markAsRead(id));
     }
 }

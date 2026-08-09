@@ -11,7 +11,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { notificationApi } from "../api/communityApi";
-import { apartmentApi } from "../api/onboardingApi";
+import { apartmentApi } from "../api/apartmentApi";
 import type { NotificationResponse } from "../api/types";
 
 const DRAWER_WIDTH = 260;
@@ -44,6 +44,8 @@ export default function AppShell({
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [apartmentName, setApartmentName] = useState("");
 
+  const isResident = user?.role === "RESIDENT";
+
   useEffect(() => {
     if (!user?.apartmentId) {
       setApartmentName("");
@@ -55,15 +57,19 @@ export default function AppShell({
   }, [user?.apartmentId]);
 
   const loadNotifications = useCallback(() => {
-    if (!user) return;
+    if (!user || !isResident) return;
     notificationApi.getByUser(user.userId).then(setNotifications).catch(() => setNotifications([]));
-  }, [user]);
+  }, [user, isResident]);
 
   useEffect(() => {
+    if (!isResident) {
+      setNotifications([]);
+      return;
+    }
     loadNotifications();
     const interval = setInterval(loadNotifications, 20000);
     return () => clearInterval(interval);
-  }, [loadNotifications]);
+  }, [loadNotifications, isResident]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -109,44 +115,48 @@ export default function AppShell({
             </Typography>
           </Typography>
 
-          <IconButton onClick={handleNotifOpen} sx={{ color: MOSS, bgcolor: OLIVE, width: 42, height: 42, border: `1px solid ${OLIVE_BORDER}`, "&:hover": { bgcolor: "#E1E4D2" } }}>
-            <Badge badgeContent={unreadCount} sx={{ "& .MuiBadge-badge": { bgcolor: TERRA, color: "#fff", fontWeight: 800, fontSize: 11, minWidth: 18, height: 18 } }}>
-              <NotificationsIcon sx={{ fontSize: 20 }} />
-            </Badge>
-          </IconButton>
-          <Menu
-            anchorEl={notifAnchor}
-            open={!!notifAnchor}
-            onClose={() => setNotifAnchor(null)}
-            slotProps={{
-              paper: { sx: { width: 360, maxHeight: 440, borderRadius: 3, border: `1px solid ${OLIVE_BORDER}`, boxShadow: "0 20px 48px rgba(46,58,37,0.16)", overflow: "hidden", display: "flex", flexDirection: "column" } },
-              list: { sx: { py: 0, overflowY: "auto", maxHeight: 440, "&::-webkit-scrollbar": { width: 6 }, "&::-webkit-scrollbar-thumb": { bgcolor: OLIVE_BORDER, borderRadius: 3 } } }
-            }}
-          >
-            {notifications.length === 0 && (
-              <MenuItem disabled sx={{ color: MOSS_LIGHT, py: 2, justifyContent: "center" }}>No notifications yet</MenuItem>
-            )}
-            {notifications.map((n) => (
-              <MenuItem
-                key={n.notificationId}
-                onClick={() => handleMarkRead(n.notificationId)}
-                sx={{
-                  whiteSpace: "normal",
-                  alignItems: "flex-start",
-                  py: 1.8,
-                  px: 2.2,
-                  bgcolor: n.read ? "transparent" : "rgba(176,132,66,0.08)",
-                  borderBottom: `1px solid ${OLIVE_BORDER}`,
-                  "&:hover": { bgcolor: n.read ? CREAM : "rgba(176,132,66,0.14)" }
+          {isResident && (
+            <>
+              <IconButton onClick={handleNotifOpen} sx={{ color: MOSS, bgcolor: OLIVE, width: 42, height: 42, border: `1px solid ${OLIVE_BORDER}`, "&:hover": { bgcolor: "#E1E4D2" } }}>
+                <Badge badgeContent={unreadCount} sx={{ "& .MuiBadge-badge": { bgcolor: TERRA, color: "#fff", fontWeight: 800, fontSize: 11, minWidth: 18, height: 18 } }}>
+                  <NotificationsIcon sx={{ fontSize: 20 }} />
+                </Badge>
+              </IconButton>
+              <Menu
+                anchorEl={notifAnchor}
+                open={!!notifAnchor}
+                onClose={() => setNotifAnchor(null)}
+                slotProps={{
+                  paper: { sx: { width: 360, maxHeight: 440, borderRadius: 3, border: `1px solid ${OLIVE_BORDER}`, boxShadow: "0 20px 48px rgba(46,58,37,0.16)", overflow: "hidden", display: "flex", flexDirection: "column" } },
+                  list: { sx: { py: 0, overflowY: "auto", maxHeight: 440, "&::-webkit-scrollbar": { width: 6 }, "&::-webkit-scrollbar-thumb": { bgcolor: OLIVE_BORDER, borderRadius: 3 } } }
                 }}
               >
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: MOSS, fontWeight: 800, lineHeight: 1.3 }}>{n.title}</Typography>
-                  <Typography variant="body2" sx={{ color: MOSS_LIGHT, mt: 0.4, lineHeight: 1.5 }}>{n.message}</Typography>
-                </Box>
-              </MenuItem>
-            ))}
-          </Menu>
+                {notifications.length === 0 && (
+                  <MenuItem disabled sx={{ color: MOSS_LIGHT, py: 2, justifyContent: "center" }}>No notifications yet</MenuItem>
+                )}
+                {notifications.map((n) => (
+                  <MenuItem
+                    key={n.notificationId}
+                    onClick={() => handleMarkRead(n.notificationId)}
+                    sx={{
+                      whiteSpace: "normal",
+                      alignItems: "flex-start",
+                      py: 1.8,
+                      px: 2.2,
+                      bgcolor: n.read ? "transparent" : "rgba(176,132,66,0.08)",
+                      borderBottom: `1px solid ${OLIVE_BORDER}`,
+                      "&:hover": { bgcolor: n.read ? CREAM : "rgba(176,132,66,0.14)" }
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ color: MOSS, fontWeight: 800, lineHeight: 1.3 }}>{n.title}</Typography>
+                      <Typography variant="body2" sx={{ color: MOSS_LIGHT, mt: 0.4, lineHeight: 1.5 }}>{n.message}</Typography>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </>
+          )}
 
           <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ ml: 0.5, p: 0.4 }}>
             <Avatar sx={{ width: 40, height: 40, bgcolor: TERRA, color: "#fff", fontWeight: 800, fontSize: 14, border: `2px solid ${OLIVE_BORDER}`, boxShadow: "0 2px 10px rgba(192,95,60,0.2)" }}>

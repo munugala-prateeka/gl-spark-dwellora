@@ -2,30 +2,53 @@ package com.dwellora.event;
 
 import java.time.LocalDateTime;
 
+/** Event published to Kafka when a new apartment event is created. */
 public class EventCreatedEvent {
-    private Integer apartmentId;
+
+    private Long apartmentId;
     private String title;
     private String description;
     private LocalDateTime eventDate;
 
     public EventCreatedEvent() {}
 
-    public EventCreatedEvent(Integer apartmentId, String title, String description, LocalDateTime eventDate) {
+    public EventCreatedEvent(
+            Long apartmentId, String title, String description, LocalDateTime eventDate) {
         this.apartmentId = apartmentId;
         this.title = title;
         this.description = description;
         this.eventDate = eventDate;
     }
 
-    public Integer getApartmentId() { return apartmentId; }
-    public void setApartmentId(Integer apartmentId) { this.apartmentId = apartmentId; }
+    public Long getApartmentId() {
+        return apartmentId;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setApartmentId(Long apartmentId) {
+        this.apartmentId = apartmentId;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getTitle() {
+        return title;
+    }
 
-    public LocalDateTime getEventDate() { return eventDate; }
-    public void setEventDate(LocalDateTime eventDate) { this.eventDate = eventDate; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDateTime eventDate) {
+        this.eventDate = eventDate;
+    }
 }

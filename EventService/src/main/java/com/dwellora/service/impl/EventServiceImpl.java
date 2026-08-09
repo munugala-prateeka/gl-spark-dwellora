@@ -11,15 +11,15 @@ import com.dwellora.exception.EventException;
 import com.dwellora.repository.EventRepository;
 import com.dwellora.repository.RsvpRepository;
 import com.dwellora.service.EventService;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+/** Implementation of EventService for creating events and managing RSVPs. */
 @Service
 public class EventServiceImpl implements EventService {
 
@@ -29,32 +29,41 @@ public class EventServiceImpl implements EventService {
     private final RsvpRepository rsvpRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public EventServiceImpl(EventRepository eventRepository, RsvpRepository rsvpRepository, KafkaTemplate<String, Object> kafkaTemplate) {
+    public EventServiceImpl(
+            EventRepository eventRepository,
+            RsvpRepository rsvpRepository,
+            KafkaTemplate<String, Object> kafkaTemplate) {
         this.eventRepository = eventRepository;
         this.rsvpRepository = rsvpRepository;
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
-    public EventResponseDTO createEvent(EventRequestDTO request) {
+    public EventResponseDTO createEvent(Long apartmentId, EventRequestDTO request) {
+
         Event event = new Event();
-        event.setApartmentId(request.getApartmentId());
+        event.setApartmentId(apartmentId);
         event.setTitle(request.getTitle());
         event.setDescription(request.getDescription());
         event.setEventDate(request.getEventDate());
         event.setCapacity(request.getCapacity());
+        event.setCurrentRsvps(0);
 
         Event saved = eventRepository.save(event);
 
         try {
-            EventCreatedEvent eventPayload = new EventCreatedEvent(
-                    saved.getApartmentId(),
-                    saved.getTitle(),
-                    saved.getDescription(),
-                    saved.getEventDate()
-            );
+            EventCreatedEvent eventPayload =
+                    new EventCreatedEvent(
+                            saved.getApartmentId(),
+                            saved.getTitle(),
+                            saved.getDescription(),
+                            saved.getEventDate());
+
             kafkaTemplate.send("event-created", eventPayload);
-            logger.info("Published event-created notification for eventId: {}", saved.getEventId());
+
+            logger.info(
+                    "Published event-created notification for eventId: {}", saved.getEventId());
+
         } catch (Exception e) {
             logger.error("Failed to publish event notification: {}", e.getMessage());
         }
@@ -63,9 +72,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventResponseDTO> getUpcomingEvents(Integer apartmentId) {
+    public List<EventResponseDTO> getUpcomingEvents(Long apartmentId) {
         return eventRepository
-                .findByApartmentIdAndEventDateAfterOrderByEventDateAsc(apartmentId, LocalDateTime.now())
+                .findByApartmentIdAndEventDateAfterOrderByEventDateAsc(
+                        apartmentId, LocalDateTime.now())
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
@@ -73,15 +83,21 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDTO rsvpToEvent(Integer eventId, Integer residentId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventException("Event not found with ID: " + eventId));
+    public EventResponseDTO rsvpToEvent(Long eventId, Long residentId, Long apartmentId) {
+
+        Event event =
+                eventRepository
+                        .findById(eventId)
+                        .orElseThrow(() -> new EventException("Event not found with ID: " + eventId));
+
+        if (!event.getApartmentId().equals(apartmentId)) {
+            throw new EventException("You cannot access an event from another apartment");
+        }
 
         if (event.getEventDate().isBefore(LocalDateTime.now())) {
             throw new EventException("Cannot RSVP to a past event");
         }
 
-        // AC-2: Capacity check
         if (event.getCapacity() != null && event.getCurrentRsvps() >= event.getCapacity()) {
             throw new EventException("RSVP rejected: Event is at full capacity");
         }
@@ -90,21 +106,24 @@ public class EventServiceImpl implements EventService {
             throw new EventException("You have already RSVP'd to this event");
         }
 
-        // Save RSVP Record
         Rsvp rsvp = new Rsvp();
         rsvp.setEventId(eventId);
         rsvp.setResidentId(residentId);
+
         rsvpRepository.save(rsvp);
 
-        // Increment RSVP count
         event.setCurrentRsvps(event.getCurrentRsvps() + 1);
+
         Event updated = eventRepository.save(event);
 
-        // Optional: Send RSVP Confirmation Event via Kafka for NotificationService
         try {
-            RsvpConfirmedEvent rsvpEvent = new RsvpConfirmedEvent(residentId, event.getTitle(), event.getEventDate());
+            RsvpConfirmedEvent rsvpEvent =
+                    new RsvpConfirmedEvent(residentId, event.getTitle(), event.getEventDate());
+
             kafkaTemplate.send("rsvp-confirmed", rsvpEvent);
+
             logger.info("Published rsvp-confirmed notification for residentId: {}", residentId);
+
         } catch (Exception e) {
             logger.error("Failed to publish RSVP confirmation event: {}", e.getMessage());
         }
@@ -114,23 +133,37 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventResponseDTO withdrawRsvp(Integer eventId, Integer residentId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventException("Event not found with ID: " + eventId));
+    public EventResponseDTO withdrawRsvp(Long eventId, Long residentId, Long apartmentId) {
 
-        Rsvp rsvp = rsvpRepository.findByEventIdAndResidentId(eventId, residentId)
-                .orElseThrow(() -> new EventException("No RSVP found for this event and resident"));
+        Event event =
+                eventRepository
+                        .findById(eventId)
+                        .orElseThrow(() -> new EventException("Event not found with ID: " + eventId));
 
-        // Delete RSVP record and release spot
+        if (!event.getApartmentId().equals(apartmentId)) {
+            throw new EventException("You cannot access an event from another apartment");
+        }
+
+        Rsvp rsvp =
+                rsvpRepository
+                        .findByEventIdAndResidentId(eventId, residentId)
+                        .orElseThrow(
+                                () -> new EventException("No RSVP found for this event and resident"));
+
         rsvpRepository.delete(rsvp);
+
         event.setCurrentRsvps(Math.max(0, event.getCurrentRsvps() - 1));
+
         Event updated = eventRepository.save(event);
 
-        // Publish RSVP Cancelled Event via Kafka
         try {
-            RsvpCancelledEvent cancelledEvent = new RsvpCancelledEvent(residentId, event.getTitle(), event.getEventDate());
+            RsvpCancelledEvent cancelledEvent =
+                    new RsvpCancelledEvent(residentId, event.getTitle(), event.getEventDate());
+
             kafkaTemplate.send("rsvp-cancelled", cancelledEvent);
-            logger.info("Published rsvp-cancelled notification for residentId: {}", residentId);
+
+            logger.info("Published rsvp-cancelled event for residentId: {}", residentId);
+
         } catch (Exception e) {
             logger.error("Failed to publish RSVP cancellation event: {}", e.getMessage());
         }
@@ -139,17 +172,24 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Integer> getMyRsvpedEventIds(Integer residentId) {
-        return rsvpRepository.findByResidentId(residentId)
-                .stream()
+    public List<Long> getMyRsvpedEventIds(Long residentId) {
+        return rsvpRepository.findByResidentId(residentId).stream()
                 .map(Rsvp::getEventId)
                 .toList();
     }
 
-    private EventResponseDTO mapToResponse(Event e) {
-        boolean isFull = e.getCapacity() != null && e.getCurrentRsvps() >= e.getCapacity();
+    private EventResponseDTO mapToResponse(Event event) {
+        boolean isFull =
+                event.getCapacity() != null && event.getCurrentRsvps() >= event.getCapacity();
+
         return new EventResponseDTO(
-                e.getEventId(), e.getApartmentId(), e.getTitle(), e.getDescription(),
-                e.getEventDate(), e.getCapacity(), e.getCurrentRsvps(), isFull);
+                event.getEventId(),
+                event.getApartmentId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getEventDate(),
+                event.getCapacity(),
+                event.getCurrentRsvps(),
+                isFull);
     }
 }

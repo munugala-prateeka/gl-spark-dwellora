@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for publishing manager creation events to Kafka.
+ */
 @Service
 public class ManagerProducer {
 
@@ -16,6 +19,9 @@ public class ManagerProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
+    /**
+     * Publishes a manager created event to the Kafka topic.
+     */
     public void publish(ManagerCreatedEvent event) {
         kafkaTemplate.send("manager-created", event);
         logger.info("Manager Created Event Published");

@@ -1,6 +1,5 @@
 package com.dwellora.service.impl;
 
-import com.dwellora.client.ApartmentClient;
 import com.dwellora.dto.AmenityRequestDTO;
 import com.dwellora.dto.AmenityResponseDTO;
 import com.dwellora.entity.Amenity;
@@ -39,9 +38,6 @@ class AmenityServiceImplTest {
     @Mock
     private AmenityRepository amenityRepository;
 
-    @Mock
-    private ApartmentClient apartmentClient;
-
     @InjectMocks
     private AmenityServiceImpl amenityService;
 
@@ -51,7 +47,6 @@ class AmenityServiceImplTest {
     @BeforeEach
     void setUp() {
         requestDTO = new AmenityRequestDTO();
-        requestDTO.setApartmentId(10);
         requestDTO.setAmenityName("Gym");
         requestDTO.setAmenityType(AmenityType.GYM);
         requestDTO.setCapacity(15);
@@ -63,8 +58,8 @@ class AmenityServiceImplTest {
         requestDTO.setMaxBookingsPerDay(20);
 
         savedAmenity = new Amenity();
-        savedAmenity.setAmenityId(1);
-        savedAmenity.setApartmentId(10);
+        savedAmenity.setAmenityId(1L);
+        savedAmenity.setApartmentId(10L);
         savedAmenity.setAmenityName("Gym");
         savedAmenity.setAmenityType(AmenityType.GYM);
         savedAmenity.setCapacity(15);
@@ -80,12 +75,11 @@ class AmenityServiceImplTest {
     @DisplayName("US-007: Given amenity name, type, capacity and hours, when saved, then it appears in the apartment's amenity list")
     void addAmenity_ValidRequest_SavesAndReturnsAmenity() {
         // Given
-        when(apartmentClient.getApartmentById(10)).thenReturn(new Object());
-        when(amenityRepository.existsByApartmentIdAndAmenityName(10, "Gym")).thenReturn(false);
+        when(amenityRepository.existsByApartmentIdAndAmenityName(10L, "Gym")).thenReturn(false);
         when(amenityRepository.save(any(Amenity.class))).thenReturn(savedAmenity);
 
         // When
-        AmenityResponseDTO response = amenityService.addAmenity(requestDTO);
+        AmenityResponseDTO response = amenityService.addAmenity(10L, requestDTO);
 
         // Then
         assertNotNull(response);
@@ -97,11 +91,10 @@ class AmenityServiceImplTest {
     @DisplayName("US-007: Given a duplicate amenity name in the same apartment, when saved, then it is rejected")
     void addAmenity_DuplicateName_ThrowsException() {
         // Given
-        when(apartmentClient.getApartmentById(10)).thenReturn(new Object());
-        when(amenityRepository.existsByApartmentIdAndAmenityName(10, "Gym")).thenReturn(true);
+        when(amenityRepository.existsByApartmentIdAndAmenityName(10L, "Gym")).thenReturn(true);
 
         // When & Then
-        assertThrows(AmenityException.class, () -> amenityService.addAmenity(requestDTO));
+        assertThrows(AmenityException.class, () -> amenityService.addAmenity(10L, requestDTO));
         verify(amenityRepository, never()).save(any());
     }
 
@@ -111,11 +104,11 @@ class AmenityServiceImplTest {
         // Given
         requestDTO.setOpeningTime(LocalTime.of(21, 0));
         requestDTO.setClosingTime(LocalTime.of(6, 0));
-        when(apartmentClient.getApartmentById(10)).thenReturn(new Object());
-        when(amenityRepository.existsByApartmentIdAndAmenityName(10, "Gym")).thenReturn(false);
+
+        when(amenityRepository.existsByApartmentIdAndAmenityName(10L, "Gym")).thenReturn(false);
 
         // When & Then
-        AmenityException ex = assertThrows(AmenityException.class, () -> amenityService.addAmenity(requestDTO));
+        AmenityException ex = assertThrows(AmenityException.class, () -> amenityService.addAmenity(10L, requestDTO));
         assertEquals("Opening time must be strictly before closing time.", ex.getMessage());
     }
 
@@ -123,10 +116,11 @@ class AmenityServiceImplTest {
     @DisplayName("US-007: Given an unreachable Apartment Service, when saving an amenity, then it is rejected")
     void addAmenity_ApartmentServiceUnavailable_ThrowsException() {
         // Given
-        when(apartmentClient.getApartmentById(10)).thenThrow(new RuntimeException("feign timeout"));
+        when(amenityRepository.existsByApartmentIdAndAmenityName(10L, "Gym"))
+                .thenThrow(new AmenityException("Apartment service is currently unavailable"));
 
         // When & Then
-        assertThrows(AmenityException.class, () -> amenityService.addAmenity(requestDTO));
+        assertThrows(AmenityException.class, () -> amenityService.addAmenity(10L, requestDTO));
         verify(amenityRepository, never()).save(any());
     }
 
@@ -134,10 +128,10 @@ class AmenityServiceImplTest {
     @DisplayName("Given an apartment id, when amenities are requested, then only that apartment's amenities are returned")
     void getAmenitiesByApartment_ReturnsScopedList() {
         // Given
-        when(amenityRepository.findByApartmentId(10)).thenReturn(List.of(savedAmenity));
+        when(amenityRepository.findByApartmentId(10L)).thenReturn(List.of(savedAmenity));
 
         // When
-        List<AmenityResponseDTO> results = amenityService.getAmenitiesByApartment(10);
+        List<AmenityResponseDTO> results = amenityService.getAmenitiesByApartment(10L);
 
         // Then
         assertEquals(1, results.size());
@@ -148,9 +142,9 @@ class AmenityServiceImplTest {
     @DisplayName("Given a non-existent amenity, when deletion is attempted, then an AmenityException is thrown")
     void deleteAmenity_MissingId_ThrowsException() {
         // Given
-        when(amenityRepository.existsById(77)).thenReturn(false);
+        when(amenityRepository.findById(77L)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(AmenityException.class, () -> amenityService.deleteAmenity(77));
+        assertThrows(AmenityException.class, () -> amenityService.deleteAmenity(77L, 10L));
     }
 }

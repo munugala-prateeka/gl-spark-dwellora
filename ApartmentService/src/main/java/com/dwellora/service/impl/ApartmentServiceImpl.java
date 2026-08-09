@@ -10,6 +10,9 @@ import com.dwellora.service.ApartmentService;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link ApartmentService} for managing apartment operations.
+ */
 @Service
 public class ApartmentServiceImpl implements ApartmentService {
 
@@ -19,6 +22,9 @@ public class ApartmentServiceImpl implements ApartmentService {
         this.apartmentRepository = apartmentRepository;
     }
 
+    /**
+     * Adds a new apartment.
+     */
     @Override
     public ApartmentResponseDTO addApartment(ApartmentRequestDTO dto) {
         Apartment apartment = mapToEntity(dto);
@@ -27,13 +33,19 @@ public class ApartmentServiceImpl implements ApartmentService {
         return mapToResponse(saved);
     }
 
+    /**
+     * Retrieves all apartments.
+     */
     @Override
     public List<ApartmentResponseDTO> getAllApartments() {
         return apartmentRepository.findAll().stream().map(this::mapToResponse).toList();
     }
 
+    /**
+     * Retrieves an apartment by its ID.
+     */
     @Override
-    public ApartmentResponseDTO getApartmentById(Integer apartmentId) {
+    public ApartmentResponseDTO getApartmentById(Long apartmentId) {
         Apartment apartment =
                 apartmentRepository
                         .findById(apartmentId)
@@ -42,8 +54,11 @@ public class ApartmentServiceImpl implements ApartmentService {
         return mapToResponse(apartment);
     }
 
+    /**
+     * Updates an existing apartment by its ID.
+     */
     @Override
-    public ApartmentResponseDTO updateApartment(Integer apartmentId, ApartmentRequestDTO dto) {
+    public ApartmentResponseDTO updateApartment(Long apartmentId, ApartmentRequestDTO dto) {
         Apartment existing =
                 apartmentRepository
                         .findById(apartmentId)
@@ -62,8 +77,11 @@ public class ApartmentServiceImpl implements ApartmentService {
         return mapToResponse(updated);
     }
 
+    /**
+     * Deletes an apartment by its ID.
+     */
     @Override
-    public void deleteApartment(Integer apartmentId) {
+    public void deleteApartment(Long apartmentId) {
         if (!apartmentRepository.existsById(apartmentId)) {
             throw new ApartmentException("Cannot delete. Apartment not found with id: " + apartmentId);
         }

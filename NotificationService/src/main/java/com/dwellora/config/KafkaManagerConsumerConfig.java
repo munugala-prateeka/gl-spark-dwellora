@@ -12,9 +12,15 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+/**
+ * Configuration class for setting up Kafka consumer components handling manager creation events.
+ */
 @Configuration
 public class KafkaManagerConsumerConfig {
 
+    /**
+     * Creates a {@link ConsumerFactory} configured for deserializing {@link ManagerCreatedEvent} payloads.
+     */
     @Bean
     public ConsumerFactory<String, ManagerCreatedEvent> managerConsumerFactory() {
         JsonDeserializer<ManagerCreatedEvent> deserializer =
@@ -30,6 +36,9 @@ public class KafkaManagerConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
+    /**
+     * Creates a {@link ConcurrentKafkaListenerContainerFactory} for manager creation event listeners.
+     */
     @Bean(name = "managerKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, ManagerCreatedEvent>
     managerKafkaListenerContainerFactory() {

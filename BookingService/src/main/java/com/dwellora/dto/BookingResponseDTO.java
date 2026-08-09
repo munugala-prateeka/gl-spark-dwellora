@@ -1,17 +1,23 @@
 package com.dwellora.dto;
+
 import com.dwellora.enums.BookingStatus;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Data transfer object containing full response details of a booked amenity slot.
+ */
 public class BookingResponseDTO {
 
-    private Integer bookingId;
+    private Long bookingId;
 
-    private Integer userId;
+    private Long userId;
 
-    private Integer amenityId;
+    private Long amenityId;
 
     private String amenityName;
+
+    private Long apartmentId;
 
     private LocalDate bookingDate;
 
@@ -21,49 +27,51 @@ public class BookingResponseDTO {
 
     private BookingStatus bookingStatus;
 
-    public BookingResponseDTO() {
-    }
+    public BookingResponseDTO() {}
 
-    public BookingResponseDTO(Integer bookingId,
-                              Integer userId,
-                              Integer amenityId,
-                              String amenityName,
-                              LocalDate bookingDate,
-                              LocalTime startTime,
-                              LocalTime endTime,
-                              BookingStatus bookingStatus) {
+    public BookingResponseDTO(
+            Long bookingId,
+            Long userId,
+            Long amenityId,
+            String amenityName,
+            Long apartmentId,
+            LocalDate bookingDate,
+            LocalTime startTime,
+            LocalTime endTime,
+            BookingStatus bookingStatus) {
 
         this.bookingId = bookingId;
         this.userId = userId;
         this.amenityId = amenityId;
         this.amenityName = amenityName;
+        this.apartmentId = apartmentId;
         this.bookingDate = bookingDate;
         this.startTime = startTime;
         this.endTime = endTime;
         this.bookingStatus = bookingStatus;
     }
 
-    public Integer getBookingId() {
+    public Long getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(Integer bookingId) {
+    public void setBookingId(Long bookingId) {
         this.bookingId = bookingId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Integer getAmenityId() {
+    public Long getAmenityId() {
         return amenityId;
     }
 
-    public void setAmenityId(Integer amenityId) {
+    public void setAmenityId(Long amenityId) {
         this.amenityId = amenityId;
     }
 
@@ -73,6 +81,14 @@ public class BookingResponseDTO {
 
     public void setAmenityName(String amenityName) {
         this.amenityName = amenityName;
+    }
+
+    public Long getApartmentId() {
+        return apartmentId;
+    }
+
+    public void setApartmentId(Long apartmentId) {
+        this.apartmentId = apartmentId;
     }
 
     public LocalDate getBookingDate() {

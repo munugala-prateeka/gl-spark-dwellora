@@ -1,28 +1,31 @@
 package com.dwellora.event;
 
+/**
+ * Event published when an apartment is created.
+ */
 public class ApartmentCreatedEvent {
 
-    private Integer requestId;
-    private Integer apartmentId;
+    private Long requestId;
+    private Long apartmentId;
     private String managerName;
     private String managerEmail;
     private String managerPhone;
 
     public ApartmentCreatedEvent() {}
 
-    public Integer getRequestId() {
+    public Long getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(Integer requestId) {
+    public void setRequestId(Long requestId) {
         this.requestId = requestId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 

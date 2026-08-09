@@ -11,7 +11,7 @@ import { useAuth } from "../../auth/AuthContext";
 import type { NoticeRequest, NoticeResponse } from "../../api/types";
 
 const emptyForm = (apartmentId: number): NoticeRequest => ({
-  apartmentId, title: "", body: "", isUrgent: false, expiresAt: null,
+  title: "", body: "", isUrgent: false, expiresAt: null,
 });
 
 export default function NoticesTab() {
@@ -24,7 +24,7 @@ export default function NoticesTab() {
 
   const load = useCallback(() => {
     if (!apartmentId) return;
-    noticeApi.getActive(apartmentId).then(setNotices).catch(() => setToast("Could not load notices."));
+    noticeApi.getActive().then(setNotices).catch(() => setToast("Could not load notices."));
   }, [apartmentId]);
 
   useEffect(load, [load]);

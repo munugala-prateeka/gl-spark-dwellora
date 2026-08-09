@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+/** Entity representing a notice record in the database. */
 @Entity
 @Table(name = "notices")
 public class Notice {
@@ -15,10 +16,10 @@ public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
-    private Integer noticeId;
+    private Long noticeId;
 
     @Column(name = "apartment_id", nullable = false)
-    private Integer apartmentId;
+    private Long apartmentId;
 
     @Column(nullable = false)
     private String title;
@@ -37,19 +38,19 @@ public class Notice {
 
     public Notice() {}
 
-    public Integer getNoticeId() {
+    public Long getNoticeId() {
         return noticeId;
     }
 
-    public void setNoticeId(Integer noticeId) {
+    public void setNoticeId(Long noticeId) {
         this.noticeId = noticeId;
     }
 
-    public Integer getApartmentId() {
+    public Long getApartmentId() {
         return apartmentId;
     }
 
-    public void setApartmentId(Integer apartmentId) {
+    public void setApartmentId(Long apartmentId) {
         this.apartmentId = apartmentId;
     }
 

@@ -7,10 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 
+/** Data transfer object for creating or updating an amenity. */
 public class AmenityRequestDTO {
-
-    @NotNull(message = "Apartment ID is required")
-    private Integer apartmentId;
 
     @NotBlank(message = "Amenity name is required")
     private String amenityName;
@@ -44,14 +42,6 @@ public class AmenityRequestDTO {
     private Integer maxBookingsPerMonth;
 
     public AmenityRequestDTO() {}
-
-    public Integer getApartmentId() {
-        return apartmentId;
-    }
-
-    public void setApartmentId(Integer apartmentId) {
-        this.apartmentId = apartmentId;
-    }
 
     public String getAmenityName() {
         return amenityName;
@@ -132,6 +122,4 @@ public class AmenityRequestDTO {
     public void setMaxBookingsPerMonth(Integer maxBookingsPerMonth) {
         this.maxBookingsPerMonth = maxBookingsPerMonth;
     }
-
-
 }

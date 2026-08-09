@@ -15,7 +15,7 @@ export default function ComplaintsTab() {
 
   const load = useCallback(() => {
     if (!apartmentId) return;
-    complaintApi.getByApartment(apartmentId).then(setComplaints).catch(() => setToast("Could not load complaints."));
+    complaintApi.getByApartment().then(setComplaints).catch(() => setToast("Could not load complaints."));
   }, [apartmentId]);
   useEffect(load, [load]);
 

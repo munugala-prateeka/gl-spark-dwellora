@@ -58,7 +58,7 @@ class ApartmentServiceImplTest {
         requestDTO.setTotalUnits(100);
 
         savedApartment = new Apartment();
-        savedApartment.setApartmentId(1);
+        savedApartment.setApartmentId(1L);
         savedApartment.setApartmentName("Green Heights");
         savedApartment.setAddress("123 Main St");
         savedApartment.setCity("Hyderabad");
@@ -89,10 +89,10 @@ class ApartmentServiceImplTest {
     @DisplayName("Given an existing apartment id, when fetched, then its details are returned")
     void getApartmentById_ExistingId_ReturnsApartment() {
         // Given
-        when(apartmentRepository.findById(1)).thenReturn(Optional.of(savedApartment));
+        when(apartmentRepository.findById(1L)).thenReturn(Optional.of(savedApartment));
 
         // When
-        ApartmentResponseDTO response = apartmentService.getApartmentById(1);
+        ApartmentResponseDTO response = apartmentService.getApartmentById(1L);
 
         // Then
         assertEquals(1, response.getApartmentId());
@@ -103,11 +103,11 @@ class ApartmentServiceImplTest {
     @DisplayName("Given a missing apartment id, when fetched, then an ApartmentException is thrown")
     void getApartmentById_MissingId_ThrowsException() {
         // Given
-        when(apartmentRepository.findById(99)).thenReturn(Optional.empty());
+        when(apartmentRepository.findById(99L)).thenReturn(Optional.empty());
 
         // When & Then
         ApartmentException ex = assertThrows(ApartmentException.class,
-                () -> apartmentService.getApartmentById(99));
+                () -> apartmentService.getApartmentById(99L));
         assertTrue(ex.getMessage().contains("99"));
     }
 
@@ -138,11 +138,11 @@ class ApartmentServiceImplTest {
         update.setTotalBlocks(6);
         update.setTotalUnits(150);
 
-        when(apartmentRepository.findById(1)).thenReturn(Optional.of(savedApartment));
+        when(apartmentRepository.findById(1L)).thenReturn(Optional.of(savedApartment));
         when(apartmentRepository.save(any(Apartment.class))).thenAnswer(i -> i.getArgument(0));
 
         // When
-        ApartmentResponseDTO response = apartmentService.updateApartment(1, update);
+        ApartmentResponseDTO response = apartmentService.updateApartment(1L, update);
 
         // Then
         assertEquals("Green Heights Phase 2", response.getApartmentName());
@@ -153,10 +153,10 @@ class ApartmentServiceImplTest {
     @DisplayName("Given a non-existent apartment, when deletion is attempted, then an ApartmentException is thrown")
     void deleteApartment_MissingId_ThrowsException() {
         // Given
-        when(apartmentRepository.existsById(42)).thenReturn(false);
+        when(apartmentRepository.existsById(42L)).thenReturn(false);
 
         // When & Then
-        assertThrows(ApartmentException.class, () -> apartmentService.deleteApartment(42));
+        assertThrows(ApartmentException.class, () -> apartmentService.deleteApartment(42L));
         verify(apartmentRepository, never()).deleteById(any());
     }
 }

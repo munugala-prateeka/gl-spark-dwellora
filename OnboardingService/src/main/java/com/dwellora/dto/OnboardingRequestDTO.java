@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+/**
+ * Data transfer object for creating an onboarding request.
+ */
 public class OnboardingRequestDTO {
 
     @NotBlank(message = "Apartment name is required")
