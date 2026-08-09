@@ -1,6 +1,7 @@
 # Dwellora
 
 **Unified Apartment Community & Resident Services Platform**
+
 GlobalLogic Java Track TE 2.0 — IAP Sprint Capstone
 
 Dwellora is a microservice-based platform that digitizes day-to-day operations
