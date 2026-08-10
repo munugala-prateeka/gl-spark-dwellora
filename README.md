@@ -14,42 +14,40 @@ apartment complex kept fully isolated from every other one on the platform.
 ## Architecture
 
 ```
-                     Frontend (React + TypeScript, Vite)
-                                    │
-                                    │  Authorization: Bearer <JWT>
-                                    ▼
-                         ┌─────────────────────┐
-                         │   API Gateway :8769  │  ← validates JWT signature
-                         │  (Spring Cloud GW)   │    + expiry ONCE, forwards
-                         └──────────┬───────────┘    X-User-Id / X-User-Role /
-                                    │                 X-Apartment-Id headers
-              ┌─────────────────────┼─────────────────────┐
-              ▼                     ▼                     ▼
-     ┌────────────────┐   ┌─────────────────┐   ┌──────────────────┐
-     │  UserService    │   │ OnboardingService│   │ ApartmentService │
-     │     :8083       │   │      :8081       │   │      :8082       │
-     └────────┬────────┘   └────────┬─────────┘   └──────────────────┘
-              │                     │  Kafka: community-approved →
-              │                     │         apartment-created →
-              │                     │         manager-created
-              ▼                     ▼
-     ┌────────────────┐   ┌──────────────────┐   ┌──────────────────┐
-     │ AmenityService  │   │  BookingService  │   │ MaintenanceService│
-     │     :8084       │   │      :8085       │   │      :8088        │
-     └────────────────┘   └──────────────────┘   └──────────────────┘
+Frontend (React + TypeScript, Vite)
+                                     │
+                        Authorization: Bearer <JWT>
+                                     ▼
+                          ┌─────────────────────┐
+                          │  API Gateway :8769  │  ← validates JWT signature + expiry ONCE,
+                          │  (Spring Cloud GW)  │    then forwards X-User-Id / X-User-Role /
+                          └─────────────────────┘    X-Apartment-Id headers downstream
+                                     │
+           ┌─────────────────────────┼─────────────────────────┐
+           ▼                         ▼                         ▼
+┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
+│  OnboardingService  │   │      UserService    │   │  ApartmentService   │
+│        :8081        │   │        :8083        │   │        :8082        │
+└─────────────────────┘   └─────────────────────┘   └─────────────────────┘
+                                       │  Kafka: community-approved ->
+                                       │         apartment-created ->
+                                       ▼         manager-created
 
-     ┌────────────────┐   ┌──────────────────┐   ┌──────────────────┐
-     │  NoticeService  │   │   EventService   │   │NotificationService│
-     │     :8089       │   │      :8086       │   │      :8087        │
-     └────────────────┘   └──────────────────┘   └──────────────────┘
-                                                   ↑ consumes every
-                                                     domain event via Kafka
-                                                     for in-app + email
-                                                     notifications
+┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
+│   AmenityService    │   │   BookingService    │   │ MaintenanceService  │
+│        :8084        │   │        :8085        │   │        :8088        │
+└─────────────────────┘   └─────────────────────┘   └─────────────────────┘
 
-     Eureka Server :8761 — service registry, every service above
-     registers with it and discovers each other by name for both
-     REST (Feign) and Gateway routing.
+┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
+│    NoticeService    │   │    EventService     │   │ NotificationService │
+│        :8089        │   │        :8086        │   │        :8087        │
+└─────────────────────┘   └─────────────────────┘   └─────────────────────┘
+                                                      ↑ consumes every domain event via Kafka
+                                                        for in-app + email notifications
+
+Eureka Server :8761 — service registry. Every service above
+registers with it and discovers the others by name, for both
+REST (Feign) calls and Gateway routing.
 ```
 
 Every service is independently deployable, owns its own PostgreSQL database,
